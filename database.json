@@ -1,0 +1,46 @@
+{
+  "schoolSlogan": "Be seen. Be heard. Be you.",
+  "postsData": [
+    {
+      "id": 1,
+      "author": "Ban Giám Hiệu (Hiệu Trưởng)",
+      "date": "18/09/2026",
+      "category": "Thông Điệp BGH",
+      "title": "Thông điệp của Hiệu trưởng THPT Dầu Giây: \"Vững bước trong kỷ nguyên mới với hành trang tri thức & sáng tạo\"",
+      "content": "Nhằm nâng cao tinh thần học tập và kỷ luật, Ban Giám Hiệu nhà trường chính thức phát động phong trào thi đua 'Lớp tốt - Rèn luyện hay' chào mừng năm học 2026-2027.",
+      "image": "/IMAGE/nentruongto.jpg"
+    }
+  ],
+  "excellencePostsData": [
+    {
+      "id": 101,
+      "author": "Ban Giám Hiệu (Hiệu Trưởng)",
+      "date": "Sept 19",
+      "category": "Vinh Danh HSG",
+      "title": "Lễ Tuyên Dương Học Sinh Giỏi Cấp Tỉnh Năm Học 2026",
+      "content": "Chúc mừng 15 học sinh xuất sắc đạt giải cao trong kỳ thi Học Sinh Giỏi cấp Tỉnh.",
+      "image": "/IMAGE/nentruongto3.jpg"
+    }
+  ],
+  "classesData": [],
+  "teachersData": [
+    {
+      "id": 1792946818598,
+      "name": "le anh khoa",
+      "gender": "Nam",
+      "dob": "30",
+      "phone": "0377140046",
+      "password": "123456",
+      "subject": "Giám Thị - Quản Sinh",
+      "address": "THPT Dầu Giây",
+      "roleType": "giamthi",
+      "assignedClass": "Trưởng Ban Giám Thị",
+      "bio": "",
+      "avatar": "/IMAGE/logothptdg.jpg",
+      "createdAt": "2026-10-25T16:46:58.598Z"
+    }
+  ],
+  "studentUsersData": [],
+  "saodoAssignments": [],
+  "saodoWeeklyScores": []
+}

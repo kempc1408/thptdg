@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Học Sinh - THPT Dầu Giây</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: { red: '#990000', darkred: '#750000', gold: '#D4AF37' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        .card-custom-shadow { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06); }
+        .dropdown-menu { opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; pointer-events: none; }
+        .group:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200 overflow-x-hidden">
+
+    <!-- PHẦN TOPBAR, HEADER & THANH MENU SẼ ĐƯỢC TỰ ĐỘNG CHÈN QUA /layout.js -->
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="container mx-auto px-3 md:px-6 py-6 flex-grow space-y-6">
+        
+        <!-- THANH TIÊU ĐỀ & THÔNG TIN QUYỀN HẠN -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl card-custom-shadow border-l-4 border-hust-red dark:border-yellow-400 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 id="page-title" class="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-users text-hust-red dark:text-yellow-400"></i> Quản Lý Danh Sách Học Sinh
+                </h2>
+                <p id="page-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Đang tải quyền truy cập hệ thống...
+                </p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <span id="role-badge" class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 font-black text-xs px-3.5 py-1.5 rounded-xl border border-red-200 uppercase">
+                    Quyền hạn
+                </span>
+                <span id="student-count-badge" class="bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-black text-xs px-3.5 py-1.5 rounded-xl border border-sky-300">
+                    Sĩ số: 0 học sinh
+                </span>
+            </div>
+        </div>
+
+        <!-- KHU VỰC NHẬP HỌC SINH (CHỈ HIỆN VỚI BGH HOẶC GVCN) -->
+        <div id="add-student-section" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- FORM NHẬP THỦ CÔNG HỌC SINH -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+                <h3 class="font-black text-base md:text-lg text-hust-red dark:text-yellow-400 uppercase flex items-center border-b dark:border-slate-700 pb-2">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Nhập Thủ Công Học Sinh
+                </h3>
+                <form id="student-form" class="space-y-3" onsubmit="handleManualAdd(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Họ và Tên Học Sinh <span class="text-red-500">*</span></label>
+                            <input type="text" id="std-name" required placeholder="Nhập đầy đủ họ tên..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-red-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Ngày Tháng Năm Sinh</label>
+                            <input type="text" id="std-dob" placeholder="DD/MM/YYYY..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-red-800">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Khối Lớp</label>
+                            <select id="std-grade" onchange="autoSyncClassGrade()" required class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-red-800">
+                                <option value="10">Khối 10</option>
+                                <option value="11">Khối 11</option>
+                                <option value="12">Khối 12</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Lớp Học <span class="text-red-500">*</span></label>
+                            <input type="text" id="std-class" required placeholder="Ví dụ: 10C2..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-red-800">
+                            <span id="gvcn-class-lock-hint" class="text-[10px] text-amber-600 dark:text-amber-400 hidden italic">* Lớp cố định theo lớp chủ nhiệm của bạn</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Tài Khoản (Email / Gmail) <span class="text-red-500">*</span></label>
+                            <input type="email" id="std-email" required placeholder="hocsinh@gmail.com..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-red-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Mật Khẩu Cấp <span class="text-red-500">*</span></label>
+                            <input type="text" id="std-password" value="123456" required class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-mono focus:ring-2 focus:ring-red-800">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-bold py-2.5 rounded-lg text-xs uppercase shadow transition duration-200">
+                        <i class="fa-solid fa-plus mr-1"></i> Lưu Học Sinh Vào Hệ Thống
+                    </button>
+                </form>
+            </div>
+
+            <!-- UPLOAD FILE EXCEL (BGH IMPORT TOÀN TRƯỜNG, GVCN IMPORT LỚP MÌNH) -->
+            <div id="excel-import-box" class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+                <h3 class="font-black text-base md:text-lg text-hust-red dark:text-yellow-400 uppercase flex items-center border-b dark:border-slate-700 pb-2">
+                    <i class="fa-solid fa-file-excel mr-2"></i> Import File Excel (tkthpt.xlsx)
+                </h3>
+                <p id="excel-desc" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Hệ thống tự động đọc file Excel (Cột Tên, Ngày sinh, Khối, Lớp, Email, Mật khẩu) và tự động cộng dồn sĩ số vào các lớp tương ứng.
+                </p>
+                
+                <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center space-y-3 bg-slate-50 dark:bg-slate-700/30">
+                    <i class="fa-solid fa-cloud-arrow-up text-4xl text-hust-red dark:text-yellow-400"></i>
+                    <input type="file" id="excel-file" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event)">
+                    <div>
+                        <button onclick="document.getElementById('excel-file').click()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-5 py-2.5 rounded-lg text-xs uppercase shadow transition">
+                            <i class="fa-solid fa-folder-open mr-1.5"></i> Chọn File Excel
+                        </button>
+                    </div>
+                    <div id="upload-status" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 pt-1"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BẢNG DANH SÁCH HỌC SINH -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b dark:border-slate-700 pb-4">
+                <h3 id="table-heading" class="font-black text-lg text-slate-800 dark:text-slate-100 uppercase flex items-center">
+                    <i class="fa-solid fa-users text-hust-red dark:text-yellow-400 mr-2"></i> Danh Sách Học Sinh
+                </h3>
+                
+                <!-- BỘ LỌC KHỐI & LỚP (HIỆU TRƯỞNG XEM CẢ 3 KHỐI, GVCN CHỈ THẤY LỚP MÌNH) -->
+                <div class="flex flex-wrap items-center gap-2" id="filter-controls">
+                    <!-- Tab Khối 10, 11, 12 cho BGH -->
+                    <div id="grade-tabs-container" class="flex gap-1.5">
+                        <button onclick="switchTab(10)" id="tab-10" class="px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition bg-hust-red text-white shadow">Khối 10</button>
+                        <button onclick="switchTab(11)" id="tab-11" class="px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">Khối 11</button>
+                        <button onclick="switchTab(12)" id="tab-12" class="px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">Khối 12</button>
+                    </div>
+
+                    <!-- Lọc chi tiết theo Lớp (cho Hiệu Trưởng / BGH) -->
+                    <div id="class-filter-container" class="flex items-center gap-1.5">
+                        <select id="class-filter-select" onchange="renderTable()" class="border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold focus:ring-2 focus:ring-red-800">
+                            <option value="ALL">-- Tất Cả Các Lớp --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 uppercase font-black border-b border-slate-300 dark:border-slate-600">
+                            <th class="p-3">STT</th>
+                            <th class="p-3">Họ và Tên Học Sinh</th>
+                            <th class="p-3">Ngày Sinh</th>
+                            <th class="p-3">Khối</th>
+                            <th class="p-3">Lớp Học</th>
+                            <th class="p-3">Chức Vụ Lớp</th>
+                            <th class="p-3">Tài Khoản (Email)</th>
+                            <th class="p-3">Mật Khẩu</th>
+                            <th class="p-3 text-center" id="action-col-header">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list-body" class="divide-y divide-slate-200 dark:divide-slate-700">
+                        <!-- JS Render -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- GẮN FILE LAYOUT DÙNG CHUNG Ở CUỐI TRANG -->
+    <script src="/layout.js"></script>
+
+    <!-- JAVASCRIPT LOGIC QUẢN LÝ HỌC SINH -->
+    <script>
+        let allStudents = [];
+        let activeTabGrade = 10;
+        let currentUserRole = '';
+        let currentUserClass = '';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            detectUserPermissions();
+            await loadStudents();
+        });
+
+        // 1. NHẬN DIỆN VAI TRÒ ĐĂNG NHẬP & THIẾT LẬP GIAO DIỆN PHÙ HỢP
+        function detectUserPermissions() {
+            currentUserRole = (localStorage.getItem('user_role') || 'khach').toLowerCase();
+            currentUserClass = (localStorage.getItem('user_assigned_class') || '').trim();
+
+            const isPrincipal = ['hieutruong', 'bgh', 'admin', 'phohieutruong'].includes(currentUserRole);
+            const isHomeroomTeacher = ['chunhiem', 'gvcn'].includes(currentUserRole);
+
+            const roleBadge = document.getElementById('role-badge');
+            const pageSubtitle = document.getElementById('page-subtitle');
+            const gradeTabs = document.getElementById('grade-tabs-container');
+            const classFilter = document.getElementById('class-filter-container');
+            const stdClassInput = document.getElementById('std-class');
+            const stdGradeSelect = document.getElementById('std-grade');
+            const gvcnLockHint = document.getElementById('gvcn-class-lock-hint');
+
+            if (isPrincipal) {
+                roleBadge.innerText = "Ban Giám Hiệu / Hiệu Trưởng";
+                roleBadge.className = "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-black text-xs px-3.5 py-1.5 rounded-xl border border-purple-200 uppercase";
+                pageSubtitle.innerText = "Quyền quản trị toàn trường: Xem & quản lý học sinh cả 3 khối 10, 11, 12 và toàn bộ các lớp.";
+                
+                gradeTabs.classList.remove('hidden');
+                classFilter.classList.remove('hidden');
+            } 
+            else if (isHomeroomTeacher) {
+                roleBadge.innerText = `GVCN Lớp ${currentUserClass || 'Chưa gán'}`;
+                roleBadge.className = "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-black text-xs px-3.5 py-1.5 rounded-xl border border-emerald-300 uppercase";
+                pageSubtitle.innerText = `Chế độ Giáo Viên Chủ Nhiệm: Bạn chỉ quản lý danh sách học sinh thuộc Lớp ${currentUserClass || 'của mình'}.`;
+                
+                // Ẩn tab 3 khối và bộ lọc lớp đi
+                gradeTabs.classList.add('hidden');
+                classFilter.classList.add('hidden');
+
+                // Cố định lớp nhập vào form cho GVCN
+                if (currentUserClass) {
+                    stdClassInput.value = currentUserClass;
+                    stdClassInput.readOnly = true;
+                    stdClassInput.classList.add('bg-slate-100', 'dark:bg-slate-600', 'cursor-not-allowed');
+                    gvcnLockHint.classList.remove('hidden');
+
+                    // Tự động nhận diện khối của lớp GVCN
+                    const matchGrade = currentUserClass.match(/^(\d+)/);
+                    if (matchGrade && stdGradeSelect) {
+                        stdGradeSelect.value = matchGrade[1];
+                        stdGradeSelect.disabled = true;
+                    }
+                }
+            } 
+            else {
+                // Học sinh hoặc vai trò khác
+                roleBadge.innerText = currentUserRole.toUpperCase();
+                pageSubtitle.innerText = "Chế độ xem thông tin danh sách lớp.";
+                gradeTabs.classList.add('hidden');
+                classFilter.classList.add('hidden');
+                document.getElementById('add-student-section').classList.add('hidden');
+            }
+        }
+
+        // Tự động đồng bộ số đầu của lớp khi đổi khối
+        function autoSyncClassGrade() {
+            const isHomeroomTeacher = ['chunhiem', 'gvcn'].includes(currentUserRole);
+            if (isHomeroomTeacher) return;
+
+            const gradeVal = document.getElementById('std-grade').value;
+            const classInput = document.getElementById('std-class');
+            if (classInput.value) {
+                classInput.value = classInput.value.replace(/^[0-9]+/, gradeVal);
+            } else {
+                classInput.value = `${gradeVal}A1`;
+            }
+        }
+
+        // 2. TẢI TOÀN BỘ DANH SÁCH HỌC SINH TỪ SERVER
+        async function loadStudents() {
+            try {
+                const res = await fetch('/api/hocsinh');
+                allStudents = await res.json();
+                
+                populateClassFilterOptions();
+                renderTable();
+            } catch (err) {
+                console.error("Lỗi khi tải học sinh:", err);
+            }
+        }
+
+        // Nạp danh sách lớp vào bộ lọc cho Hiệu trưởng
+        function populateClassFilterOptions() {
+            const select = document.getElementById('class-filter-select');
+            const classSet = new Set();
+            
+            allStudents.forEach(s => {
+                const c = (s.className || s.assignedClass || '').trim();
+                const g = parseInt(s.grade, 10);
+                if (c && g === activeTabGrade) {
+                    classSet.add(c);
+                }
+            });
+
+            const sortedClasses = Array.from(classSet).sort();
+            select.innerHTML = `<option value="ALL">-- Tất Cả Lớp Khối ${activeTabGrade} --</option>` +
+                sortedClasses.map(c => `<option value="${c}">Lớp ${c}</option>`).join('');
+        }
+
+        // 3. CHUYỂN TAB KHỐI (DÀNH CHO HIỆU TRƯỞNG / BGH)
+        function switchTab(grade) {
+            activeTabGrade = parseInt(grade, 10);
+            [10, 11, 12].forEach(g => {
+                const btn = document.getElementById(`tab-${g}`);
+                if (g === activeTabGrade) {
+                    btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition bg-hust-red text-white shadow";
+                } else {
+                    btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase transition bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200";
+                }
+            });
+
+            populateClassFilterOptions();
+            renderTable();
+        }
+
+        // 4. HIỂN THỊ DANH SÁCH HỌC SINH THEO QUYỀN
+        function renderTable() {
+            const tbody = document.getElementById('student-list-body');
+            const badge = document.getElementById('student-count-badge');
+            const heading = document.getElementById('table-heading');
+
+            const isPrincipal = ['hieutruong', 'bgh', 'admin', 'phohieutruong'].includes(currentUserRole);
+            const isHomeroomTeacher = ['chunhiem', 'gvcn'].includes(currentUserRole);
+
+            let displayStudents = [];
+
+            if (isPrincipal) {
+                // Hiệu trưởng: Lọc theo tab khối và theo lớp được chọn trong dropdown
+                const selectedClass = document.getElementById('class-filter-select').value;
+                displayStudents = allStudents.filter(s => {
+                    const matchGrade = parseInt(s.grade, 10) === activeTabGrade;
+                    if (!matchGrade) return false;
+                    if (selectedClass !== 'ALL') {
+                        return (s.className || s.assignedClass || '').toUpperCase() === selectedClass.toUpperCase();
+                    }
+                    return true;
+                });
+                heading.innerHTML = `<i class="fa-solid fa-users text-hust-red dark:text-yellow-400 mr-2"></i> Danh Sách Học Sinh - Khối ${activeTabGrade} ${selectedClass !== 'ALL' ? `(Lớp ${selectedClass})` : ''}`;
+            } 
+            else if (isHomeroomTeacher) {
+                // GVCN: CHỈ LỌC DUY NHẤT LỚP MÌNH CHỦ NHIỆM
+                displayStudents = allStudents.filter(s => {
+                    const studentClass = (s.className || s.assignedClass || '').trim().toUpperCase();
+                    return studentClass === currentUserClass.toUpperCase();
+                });
+                heading.innerHTML = `<i class="fa-solid fa-users text-emerald-600 mr-2"></i> Danh Sách Học Sinh Chủ Nhiệm - Lớp ${currentUserClass || 'Chưa phân lớp'}`;
+            } 
+            else {
+                // Khách hoặc học sinh: Lọc theo lớp mình
+                const myClass = (localStorage.getItem('user_assigned_class') || '').trim().toUpperCase();
+                displayStudents = allStudents.filter(s => (s.className || s.assignedClass || '').trim().toUpperCase() === myClass);
+            }
+
+            badge.innerText = `Sĩ số: ${displayStudents.length} học sinh`;
+
+            if (displayStudents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">Không có dữ liệu học sinh nào phù hợp.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = displayStudents.map((s, idx) => {
+                const canEditRole = isHomeroomTeacher || isPrincipal;
+                const roleBadge = s.classRole && s.classRole !== 'Học Sinh' 
+                    ? `<span class="bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300 text-[10px] font-black px-2 py-0.5 rounded">${s.classRole}</span>`
+                    : `<span class="text-slate-400">Học sinh</span>`;
+
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                        <td class="p-3 font-bold">${idx + 1}</td>
+                        <td class="p-3 font-bold text-slate-800 dark:text-slate-100 text-xs">${s.name}</td>
+                        <td class="p-3">${s.dob || '—'}</td>
+                        <td class="p-3"><span class="bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300 text-[10px] font-extrabold px-2 py-0.5 rounded">Khối ${s.grade}</span></td>
+                        <td class="p-3 font-black text-hust-red dark:text-yellow-400 text-xs">${s.className || s.assignedClass || '—'}</td>
+                        <td class="p-3 font-bold">${roleBadge}</td>
+                        <td class="p-3 font-semibold text-slate-600 dark:text-slate-300">${s.email}</td>
+                        <td class="p-3 font-mono text-slate-500">${s.password}</td>
+                        <td class="p-3 text-center space-x-1">
+                            ${canEditRole ? `
+                                <button onclick="assignClassRolePrompt(${s.id}, '${s.name}')" class="bg-purple-100 hover:bg-purple-600 text-purple-700 hover:text-white px-2 py-1 rounded text-[10px] font-bold transition" title="Gán chức vụ cán sự">
+                                    <i class="fa-solid fa-user-tag mr-0.5"></i> Chức vụ
+                                </button>
+                                <button onclick="deleteStudent(${s.id})" class="bg-red-100 hover:bg-red-600 text-red-700 hover:text-white px-2 py-1 rounded text-[10px] font-bold transition" title="Xóa học sinh">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            ` : `<span class="text-slate-400 text-[11px]">Không có quyền</span>`}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 5. GÁN CHỨC VỤ CÁN SỰ LỚP (LỚP TRƯỞNG, SAO ĐỎ, BÍ THƯ...) CHO GVCN VÀ HIỆU TRƯỞNG
+        async function assignClassRolePrompt(id, name) {
+            const currentStudent = allStudents.find(s => s.id === id);
+            const roles = ["Học Sinh", "Sao Đỏ", "Lớp Trưởng", "Lớp Phó", "Bí Thư"];
+            const chosen = prompt(`Chọn chức vụ mới cho em [${name}]:\n(Học Sinh, Sao Đỏ, Lớp Trưởng, Lớp Phó, Bí Thư)`, currentStudent.classRole || "Học Sinh");
+
+            if (!chosen) return;
+
+            const cleanRole = chosen.trim();
+            let roleType = "hocsinh";
+            if (cleanRole.toLowerCase() === "sao đỏ") roleType = "saodo";
+            else if (cleanRole.toLowerCase() === "lớp trưởng") roleType = "loptruong";
+            else if (cleanRole.toLowerCase() === "lớp phó") roleType = "loppho";
+            else if (cleanRole.toLowerCase() === "bí thư") roleType = "bithulop";
+
+            try {
+                const res = await fetch(`/api/hocsinh/${id}/role`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ classRole: cleanRole, roleType: roleType })
+                });
+
+                if (res.ok) {
+                    alert(`Đã cập nhật chức vụ [${cleanRole}] cho em ${name} thành công!`);
+                    await loadStudents();
+                } else {
+                    alert("Lỗi khi cập nhật chức vụ!");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 6. THÊM HỌC SINH THỦ CÔNG
+        async function handleManualAdd(e) {
+            e.preventDefault();
+            const name = document.getElementById('std-name').value.trim();
+            const dob = document.getElementById('std-dob').value.trim();
+            let grade = parseInt(document.getElementById('std-grade').value, 10);
+            let className = document.getElementById('std-class').value.trim();
+            const email = document.getElementById('std-email').value.trim();
+            const password = document.getElementById('std-password').value.trim();
+
+            const isHomeroomTeacher = ['chunhiem', 'gvcn'].includes(currentUserRole);
+            if (isHomeroomTeacher && currentUserClass) {
+                className = currentUserClass;
+                const m = currentUserClass.match(/^(\d+)/);
+                if (m) grade = parseInt(m[1], 10);
+            }
+
+            try {
+                const res = await fetch('/api/hocsinh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, dob, grade, className, email, password })
+                });
+
+                if (res.ok) {
+                    alert(`Thêm học sinh thành công vào lớp ${className}!`);
+                    document.getElementById('student-form').reset();
+                    if (!isHomeroomTeacher) {
+                        switchTab(grade);
+                    }
+                    await loadStudents();
+                } else {
+                    const data = await res.json();
+                    alert(data.error || 'Lỗi khi thêm học sinh!');
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Không thể kết nối đến máy chủ!");
+            }
+        }
+
+        // 7. IMPORT FILE EXCEL
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const isHomeroomTeacher = ['chunhiem', 'gvcn'].includes(currentUserRole);
+            const statusDiv = document.getElementById('upload-status');
+            statusDiv.innerText = `Đang phân tích file ${file.name}...`;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    let extractedList = [];
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                        for (let i = 0; i < jsonRows.length; i++) {
+                            const row = jsonRows[i];
+                            if (!row || row.length < 3) continue;
+
+                            let name = row[2] ? String(row[2]).trim() : (row[1] ? String(row[1]).trim() : '');
+                            let email = '';
+                            let password = '';
+                            let className = '';
+                            let grade = '';
+                            let dob = '';
+
+                            for (let col = 0; col < row.length; col++) {
+                                const val = String(row[col] || '').trim();
+                                if (val.includes('@')) email = val;
+                            }
+
+                            dob = row[3] ? String(row[3]).trim() : '';
+                            grade = row[4] ? String(row[4]).trim() : '';
+                            className = row[5] ? String(row[5]).trim() : '';
+                            password = row[7] ? String(row[7]).trim() : (row[6] && !row[6].includes('@') ? String(row[6]).trim() : '123456');
+
+                            // NẾU LÀ GVCN: Chỉ cho phép import đúng học sinh thuộc lớp mình
+                            if (isHomeroomTeacher && currentUserClass) {
+                                if (className && className.toUpperCase() !== currentUserClass.toUpperCase()) {
+                                    continue; // Bỏ qua học sinh thuộc lớp khác
+                                }
+                                className = currentUserClass;
+                            }
+
+                            if (name && email && name.toLowerCase() !== 'họ và tên') {
+                                extractedList.push({ name, dob, grade, className, email, password });
+                            }
+                        }
+                    });
+
+                    if (extractedList.length > 0) {
+                        const res = await fetch('/api/hocsinh/batch', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ students: extractedList })
+                        });
+
+                        if (res.ok) {
+                            statusDiv.innerText = `Đã import thành công ${extractedList.length} học sinh!`;
+                            await loadStudents();
+                        } else {
+                            statusDiv.innerText = "Lỗi khi lưu dữ liệu lên server!";
+                        }
+                    } else {
+                        statusDiv.innerText = isHomeroomTeacher 
+                            ? `Không tìm thấy học sinh nào thuộc lớp ${currentUserClass} trong file Excel!` 
+                            : "Không tìm thấy dữ liệu học sinh hợp lệ trong file Excel!";
+                    }
+                } catch (err) {
+                    console.error(err);
+                    statusDiv.innerText = "File Excel không đúng định dạng!";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 8. XÓA HỌC SINH
+        async function deleteStudent(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa học sinh này không?')) return;
+            const res = await fetch(`/api/hocsinh/${id}`, { method: 'DELETE' });
+            if (res.ok) await loadStudents();
+        }
+    </script>
+</body>
+</html>

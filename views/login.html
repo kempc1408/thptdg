@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - THPT Dầu Giây</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        
+        /* Hiệu ứng rung khi đăng nhập thất bại */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Hiệu ứng hiện dần cho popup thành công */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pop-in {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
+
+    <!-- Lớp ảnh nền bị làm mờ (Blur Background) -->
+    <div class="fixed inset-0 -z-20 bg-cover bg-center scale-105 filter blur-md" 
+         style="background-image: url('/IMAGE/nentruonglogin.jpg');"></div>
+    
+    <!-- Lớp phủ màu tối tăng độ tương phản -->
+    <div class="fixed inset-0 -z-10 bg-slate-900/50"></div>
+
+    <!-- Khung Đăng Nhập Ở Giữa -->
+    <div id="login-card" class="w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20 transition-all duration-300 relative z-10">
+        
+        <!-- Header & Logo -->
+        <div class="text-center mb-6">
+            <a href="/index" class="inline-block">
+                <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" alt="Logo THPT Dầu Giây" class="w-20 h-20 mx-auto rounded-full border-2 border-red-700 shadow-lg object-cover mb-3">
+            </a>
+            <h2 class="text-2xl font-black text-red-800 dark:text-red-500 uppercase tracking-wide">THPT Dầu Giây</h2>
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">Hệ Thống Quản Lý Học Tập & Thi Đua</p>
+        </div>
+
+        <!-- Cảnh báo đăng nhập sai -->
+        <div id="error-alert" class="hidden mb-4 p-3 bg-red-100 border-l-4 border-red-600 text-red-700 rounded text-xs font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-base"></i>
+            <span id="error-message">Số điện thoại / Email hoặc mật khẩu không chính xác!</span>
+        </div>
+
+        <!-- Form Đăng Nhập -->
+        <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Số điện thoại hoặc Email / Gmail</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" id="username" required placeholder="Nhập SĐT hoặc Email (vd: 0912... hoặc hs@gmail.com)..."
+                        class="w-full pl-10 pr-4 py-2.5 bg-white/80 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-700 transition">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Mật khẩu</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required placeholder="Nhập mật khẩu..."
+                        class="w-full pl-10 pr-10 py-2.5 bg-white/80 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-700 transition">
+                    <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                        <i id="eye-icon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs pt-1">
+                <label class="flex items-center text-slate-600 dark:text-slate-400">
+                    <input type="checkbox" id="remember-me" checked class="rounded border-slate-300 text-red-700 focus:ring-red-700 mr-2">
+                    Ghi nhớ đăng nhập
+                </label>
+                <a href="#" onclick="alert('Vui lòng liên hệ Thầy/Cô Quản Trị hoặc Ban Giám Hiệu để được cấp lại mật khẩu!')" class="text-red-700 dark:text-red-400 font-medium hover:underline">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="w-full bg-red-800 hover:bg-red-900 text-white font-bold py-3 rounded-lg shadow-lg uppercase text-sm tracking-wider transition duration-200 mt-2">
+                Đăng Nhập
+            </button>
+        </form>
+
+        <div class="text-center mt-6 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <a href="/index" class="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 font-medium inline-flex items-center">
+                <i class="fa-solid fa-arrow-left mr-1.5"></i> Quay lại trang chủ
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal Đăng Nhập Thành Công -->
+    <div id="success-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full text-center border border-emerald-500/30 animate-pop-in space-y-4">
+            <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            
+            <div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100">Đăng Nhập Thành Công!</h3>
+                <p id="user-greeting" class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium">Chào mừng bạn trở lại hệ thống.</p>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 text-xs text-red-700 dark:text-red-400 font-semibold pt-2">
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Đang đồng bộ lớp học và chuyển hướng...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function triggerShake() {
+            const loginCard = document.getElementById('login-card');
+            loginCard.classList.remove('animate-shake');
+            void loginCard.offsetWidth; // Force reflow để trigger lại animation
+            loginCard.classList.add('animate-shake');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const usernameVal = document.getElementById('username').value.trim();
+            const passwordVal = document.getElementById('password').value.trim();
+            const errorAlert = document.getElementById('error-alert');
+            const errorMessage = document.getElementById('error-message');
+            const successModal = document.getElementById('success-modal');
+            const userGreeting = document.getElementById('user-greeting');
+
+            // 1. Kiểm tra tài khoản Hiệu Trưởng mặc định
+            if ((usernameVal === "0377140041" || usernameVal.toLowerCase() === "hieutruong@daugiay.edu.vn") && passwordVal === "1234") {
+                errorAlert.classList.add('hidden');
+                localStorage.setItem('user_role', 'admin');
+                localStorage.setItem('user_name', 'Ban Giám Hiệu (Hiệu Trưởng)');
+                localStorage.setItem('user_assigned_class', '');
+                localStorage.setItem('user_class', '');
+                
+                userGreeting.innerText = "Chào mừng Thầy Hiệu Trưởng đến với hệ thống!";
+                successModal.classList.remove('hidden');
+                setTimeout(() => { window.location.href = "/index"; }, 1000);
+                return;
+            }
+
+            // 2. Gửi Yêu Cầu Xác Thực Lên Server
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: usernameVal, password: passwordVal })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    errorAlert.classList.add('hidden');
+
+                    const assignedClassClean = (data.assignedClass || '').trim();
+                    const returnedRole = (data.role || 'hocsinh').toLowerCase();
+
+                    // Lưu toàn bộ thông tin đăng nhập vào localStorage
+                    localStorage.setItem('user_role', returnedRole);
+                    localStorage.setItem('user_name', data.userName || 'Người dùng');
+                    localStorage.setItem('user_phone', data.phone || usernameVal);
+                    localStorage.setItem('user_email', data.email || '');
+                    localStorage.setItem('user_assigned_class', assignedClassClean);
+                    localStorage.setItem('user_class', assignedClassClean);
+
+                    // ============================================================
+                    // XỬ LÝ LỜI CHÀO PHÂN BIỆT RÕ RÀNG GIÁO VIÊN VÀ HỌC SINH / CÁN SỰ
+                    // ============================================================
+                    let greeting = `Chào mừng ${data.userName} đã đăng nhập!`;
+
+                    if (data.isTeacher) {
+                        // Là Giáo viên
+                        if (returnedRole === 'chunhiem' && assignedClassClean) {
+                            greeting = `Chào mừng ${data.userName} - Giáo Viên Chủ Nhiệm Lớp ${assignedClassClean}!`;
+                        } else {
+                            greeting = `Chào mừng ${data.userName}!`;
+                        }
+                    } else {
+                        // Là Học sinh / Cán sự lớp (Lớp trưởng, Lớp phó, Bí thư, Sao đỏ...)
+                        const roleTitle = data.classRole || 
+                            (returnedRole === 'loptruong' ? 'Lớp Trưởng' : 
+                            (returnedRole === 'loppho' ? 'Lớp Phó' : 
+                            (returnedRole === 'bithulop' ? 'Bí Thư' : 
+                            (returnedRole === 'saodo' ? 'Sao Đỏ' : 'Học Sinh'))));
+
+                        if (assignedClassClean) {
+                            greeting = `Chào mừng bạn ${data.userName} - ${roleTitle} Lớp ${assignedClassClean}!`;
+                        } else {
+                            greeting = `Chào mừng bạn ${data.userName}!`;
+                        }
+                    }
+
+                    userGreeting.innerText = greeting;
+                    successModal.classList.remove('hidden');
+
+                    // Chuyển hướng về trang chủ
+                    setTimeout(() => { window.location.href = "/index"; }, 1000);
+                } else {
+                    errorMessage.innerText = data.error || "Số điện thoại / Email hoặc mật khẩu không chính xác!";
+                    errorAlert.classList.remove('hidden');
+                    triggerShake();
+                }
+            } catch (err) {
+                console.error("Lỗi đăng nhập:", err);
+                errorMessage.innerText = "Không thể kết nối đến máy chủ! Vui lòng thử lại sau.";
+                errorAlert.classList.remove('hidden');
+                triggerShake();
+            }
+        }
+    </script>
+</body>
+</html>

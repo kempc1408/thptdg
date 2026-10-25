@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THPT Dầu Giây - Quản Lý Khối Lớp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { hust: { red: '#990000', darkred: '#750000', gold: '#D4AF37' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .dropdown-menu { opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.2s ease; pointer-events: none; }
+        .group:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen">
+
+    <!-- TOP BAR -->
+    <div class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 flex justify-between items-center border-b border-slate-800">
+        <div class="flex items-center space-x-4">
+            <span><i class="fa-solid fa-phone text-yellow-500 mr-1.5"></i>02513762810</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-envelope text-yellow-500 mr-1.5"></i>c3.daugiay@dongnai.edu.vn</span>
+        </div>
+        <button id="theme-toggle" class="bg-slate-800 text-yellow-400 px-3 py-1 rounded-full text-xs font-bold border border-slate-700">
+            <i class="fa-solid fa-moon mr-1"></i>Giao diện
+        </button>
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-white dark:bg-slate-800 border-b dark:border-slate-700 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <img src="/IMAGE/logothptdg.jpg" onerror="this.src='/image/logothptdg.jpg'" class="w-12 h-12 rounded-full border-2 border-red-800">
+                <div>
+                    <h1 class="text-xl font-black text-hust-red dark:text-red-400 uppercase">THPT Dầu Giây</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 uppercase">Dau Giay High School Portal</p>
+                </div>
+            </a>
+            <div id="user-area"></div>
+        </div>
+
+        <!-- NAVBAR -->
+        <nav class="bg-hust-red text-white">
+            <div class="container mx-auto px-2 flex space-x-1 text-xs md:text-sm font-bold uppercase">
+                <a href="/" class="py-3 px-4 hover:bg-yellow-400 hover:text-slate-900 transition"><i class="fa-solid fa-house mr-1.5"></i>Trang Chủ</a>
+                <a href="/khoilop" class="py-3 px-4 bg-hust-darkred border-b-2 border-yellow-400 text-yellow-300"><i class="fa-solid fa-layer-group mr-1.5"></i>Khối Lớp</a>
+                <a href="/giaovien" class="py-3 px-4 hover:bg-yellow-400 hover:text-slate-900 transition"><i class="fa-solid fa-user-tie mr-1.5"></i>Giáo Viên</a>
+                <a href="/lophoc" class="py-3 px-4 hover:bg-yellow-400 hover:text-slate-900 transition"><i class="fa-solid fa-chalkboard-user mr-1.5"></i>Lớp Học</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="container mx-auto px-4 py-6 flex-grow space-y-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow border dark:border-slate-700">
+            <h2 class="text-lg font-black text-hust-red dark:text-yellow-400 uppercase mb-4 border-b pb-2">
+                <i class="fa-solid fa-sitemap mr-2"></i>Quản Lý Khối Lớp & Phân Công GVCN (Hiệu Trưởng)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tạo Khối Mới -->
+                <div class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border dark:border-slate-600 space-y-3">
+                    <h3 class="font-bold text-sm uppercase text-slate-700 dark:text-slate-200">1. Tạo Khối Mới</h3>
+                    <input type="text" id="grade-name" placeholder="Ví dụ: Khối 10" class="w-full border dark:border-slate-600 dark:bg-slate-700 p-2 text-xs rounded-lg">
+                    <button onclick="addGrade()" class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-bold text-xs px-4 py-2 rounded-lg transition">
+                        <i class="fa-solid fa-plus mr-1"></i>Thêm Khối
+                    </button>
+                </div>
+
+                <!-- Tạo Lớp & GVCN -->
+                <div class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border dark:border-slate-600 space-y-3">
+                    <h3 class="font-bold text-sm uppercase text-slate-700 dark:text-slate-200">2. Tạo Lớp & Phân Công GVCN</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="select-grade" class="border dark:border-slate-600 dark:bg-slate-700 p-2 text-xs rounded-lg">
+                            <option value="10">Khối 10</option>
+                            <option value="11">Khối 11</option>
+                            <option value="12">Khối 12</option>
+                        </select>
+                        <input type="text" id="class-name" placeholder="Tên lớp (10A1)" class="border dark:border-slate-600 dark:bg-slate-700 p-2 text-xs rounded-lg">
+                    </div>
+                    <select id="select-teacher" class="w-full border dark:border-slate-600 dark:bg-slate-700 p-2 text-xs rounded-lg">
+                        <option value="">-- Chọn Giáo Viên Chủ Nhiệm --</option>
+                        <option value="gv1">Thầy Nguyễn Văn A (Toán)</option>
+                        <option value="gv2">Cô Trần Thị B (Văn)</option>
+                    </select>
+                    <button onclick="addClass()" class="bg-green-700 hover:bg-green-600 text-white font-bold text-xs px-4 py-2 rounded-lg transition">
+                        <i class="fa-solid fa-check mr-1"></i>Tạo Lớp & Phân Công
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bảng danh sách Lớp -->
+            <div class="mt-6 overflow-x-auto">
+                <h3 class="font-bold text-sm uppercase text-slate-700 dark:text-slate-200 mb-3">Danh Sách Các Lớp Học Hiện Tại</h3>
+                <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-700">
+                    <thead class="bg-slate-100 dark:bg-slate-700 uppercase font-bold text-slate-700 dark:text-slate-200">
+                        <tr>
+                            <th class="p-3 border">Khối</th>
+                            <th class="p-3 border">Tên Lớp</th>
+                            <th class="p-3 border">Giáo Viên Chủ Nhiệm</th>
+                            <th class="p-3 border">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-table-body">
+                        <tr class="border-b dark:border-slate-700">
+                            <td class="p-3 border">Khối 10</td>
+                            <td class="p-3 border font-bold text-hust-red dark:text-yellow-400">10A1</td>
+                            <td class="p-3 border">Thầy Nguyễn Văn A</td>
+                            <td class="p-3 border"><button class="text-red-600 hover:underline font-bold">Xóa</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function addGrade() { alert("Đã tạo khối thành công!"); }
+        function addClass() { alert("Đã tạo lớp và phân công GVCN thành công!"); }
+    </script>
+</body>
+</html>

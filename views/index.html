@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THPT Dầu Giây - Cổng Thông Tin Điện Tử</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: {
+                            red: '#990000',
+                            darkred: '#750000',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .card-custom-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
+        }
+
+        html.dark .text-hust-red {
+            color: #f87171 !important;
+        }
+        html.dark .border-hust-red {
+            border-color: #f87171 !important;
+        }
+        html.dark h3 .text-hust-red,
+        html.dark h4 .text-hust-red,
+        html.dark .dark-title-gold {
+            color: #facc15 !important;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pop-in { animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .club-transition {
+            transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
+        }
+        .club-fade-out {
+            opacity: 0.2;
+            transform: scale(0.98);
+        }
+
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            pointer-events: none;
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200 overflow-x-hidden">
+
+    <!-- ========================================================
+         PHẦN TOPBAR, HEADER, LOGO & THANH MENU SẼ ĐƯỢC TỰ ĐỘNG
+         CHÈN TẠI ĐÂY QUA FILE /layout.js
+         ======================================================== -->
+
+    <!-- HERO SECTION VỚI SLIDER HÌNH ẢNH & SLOGAN TRƯỜNG -->
+    <section class="relative w-full pb-10 sm:pb-14 z-0">
+        <div class="w-full h-[220px] sm:h-[320px] md:h-[480px] overflow-hidden relative shadow-md" id="hero-slider">
+            <img src="/IMAGE/nentruongto.jpg" onerror="this.onerror=null; this.src='/image/nentruongto.jpg';" alt="Nền Trường THPT Dầu Giây 1" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-100">
+            <img src="/IMAGE/nentruongto2.jpg" onerror="this.onerror=null; this.src='/image/nentruongto2.jpg';" alt="Nền Trường THPT Dầu Giây 2" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0">
+            <img src="/IMAGE/nentruongto3.jpg" onerror="this.onerror=null; this.src='/image/nentruongto3.jpg';" alt="Nền Trường THPT Dầu Giây 3" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0">
+        </div>
+        
+        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-[94%] sm:w-[85%] md:w-[620px] bg-hust-red/95 backdrop-blur-sm text-white p-3.5 sm:p-5 md:p-7 rounded-xl md:rounded-2xl card-custom-shadow text-center z-10 border border-red-700/50">
+            <h2 id="slogan-display" class="text-base sm:text-xl md:text-3xl font-black tracking-tight leading-snug">"Be seen. Be heard. Be you."</h2>
+            <p class="text-[10px] sm:text-xs md:text-sm text-red-100 font-medium italic mt-0.5">Tiên học lễ - Hậu học văn.</p>
+            
+            <div class="my-2 border-t border-red-700/60 pt-1.5">
+                <span class="text-[10px] sm:text-xs md:text-sm font-bold text-yellow-300 uppercase tracking-wider block">
+                    Môi Trường Giáo Dục Toàn Diện & Đổi Mới
+                </span>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mt-2 sm:mt-4">
+                <a href="/thidua" class="bg-white hover:bg-yellow-400 hover:text-slate-900 text-slate-900 font-extrabold px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg text-[10px] sm:text-xs shadow transition uppercase">
+                    Bảng Xếp Hạng
+                </a>
+                <a href="#tintuc-section" class="bg-white hover:bg-yellow-400 hover:text-slate-900 text-slate-900 font-extrabold px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg text-[10px] sm:text-xs shadow transition uppercase">
+                    Bài Viết Mới Nhất
+                </a>
+            </div>
+
+            <div id="admin-slogan-btn" class="hidden mt-2">
+                <button onclick="editSlogan()" class="bg-red-800 hover:bg-yellow-400 hover:text-slate-900 text-white text-[10px] font-bold px-2.5 py-1 rounded border border-red-600 transition uppercase">
+                    Sửa Slogan
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN FEED BÀI BÁO & TIN TỨC -->
+    <main class="container mx-auto px-3 md:px-4 py-4 md:py-6 flex-grow space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
+            
+            <div class="lg:col-span-2 flex flex-col gap-4">
+                
+                <!-- KHUNG ĐĂNG BÀI: CHỈ BGH, GIÁM THỊ, QUẢN SINH MỚI THẤY -->
+                <div id="create-post-card" class="hidden bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+                    <h3 class="font-black text-base md:text-lg text-hust-red dark:text-yellow-400 uppercase flex items-center border-b dark:border-slate-700 pb-2">
+                        Đăng Bài Báo / Vinh Danh Học Sinh (Ban Giám Hiệu & Giám Thị / Quản Sinh)
+                    </h3>
+                    <form id="create-post-form" class="space-y-3">
+                        <div class="bg-slate-50 dark:bg-slate-700/50 p-2.5 rounded-lg border dark:border-slate-600">
+                            <label class="block text-xs font-black text-hust-red dark:text-yellow-400 uppercase mb-1.5"> Vị trí hiển thị bài viết:</label>
+                            <div class="flex flex-wrap gap-4 text-xs font-bold">
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="radio" name="post_target" value="news" checked class="accent-red-700">
+                                    <span>Bài viết Tin Tức / Báo Trường (Mục Trên)</span>
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="radio" name="post_target" value="excellence" class="accent-red-700">
+                                    <span class="text-yellow-600 dark:text-yellow-400">Vinh Danh Học Sinh Giỏi (Mục Dưới)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Tiêu đề bài viết</label>
+                            <input type="text" id="post-title" required placeholder="Nhập tiêu đề bài viết..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-red-800">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Upload hình ảnh đính kèm</label>
+                            <input type="file" id="post-image-file" accept="image/*" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-red-800 bg-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-1">Nội dung bài viết chi tiết</label>
+                            <textarea id="post-content" rows="3" required placeholder="Nội dung bài báo..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-red-800"></textarea>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 pt-1">
+                            <select id="post-category" class="border dark:border-slate-600 dark:bg-slate-700 text-xs font-semibold rounded-lg px-3 py-2">
+                                <option value="Thông Điệp BGH">Chuyên mục: Thông Điệp BGH</option>
+                                <option value="Tin Tức">Chuyên mục: Tin Tức Trường</option>
+                                <option value="Nề Nếp & Kỷ Luật">Chuyên mục: Nề Nếp & Kỷ Luật</option>
+                                <option value="Học Sinh Giỏi">Chuyên mục: Vinh Danh Học Sinh Giỏi</option>
+                            </select>
+                            <button type="submit" class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-xs font-bold px-6 py-2.5 rounded-lg shadow uppercase flex items-center justify-center gap-2 transition duration-200">
+                                Xuất Bản Bài Viết
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="tintuc-section" class="bg-white dark:bg-slate-800 p-3.5 md:p-4 rounded-xl card-custom-shadow border-l-4 border-hust-red dark:border-yellow-400 flex justify-between items-center">
+                    <h3 class="font-black text-slate-800 dark:text-slate-100 uppercase text-sm md:text-base tracking-wider flex items-center">
+                        BÀI VIẾT MỚI NHẤT
+                    </h3>
+                </div>
+
+                <div id="posts-feed" class="flex flex-col gap-4"></div>
+
+            </div>
+
+            <!-- CỘT BÊN PHẢI: TOP THI ĐUA VÀ LỊCH CÔNG TÁC -->
+            <div class="flex flex-col gap-6">
+                <div class="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl card-custom-shadow border-t-4 border-yellow-500 space-y-3 md:space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800 dark:text-slate-100 uppercase text-xs md:text-sm">
+                            Top Lớp Thi Đua Tuần
+                        </h3>
+                        <a href="/thidua" class="text-xs font-bold text-hust-red dark:text-yellow-400 hover:underline">Xem tất cả</a>
+                    </div>
+                    <div class="space-y-2 md:space-y-3">
+                        <div class="flex items-center justify-between p-2 md:p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded border dark:border-slate-700">
+                            <span class="font-bold text-xs md:text-sm"><span class="text-yellow-500 font-black mr-2">#1</span>Lớp 12A1</span>
+                            <span class="bg-green-100 text-green-800 text-[11px] font-bold px-2 py-0.5 rounded">100 điểm</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 md:p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded border dark:border-slate-700">
+                            <span class="font-bold text-xs md:text-sm"><span class="text-slate-400 font-black mr-2">#2</span>Lớp 11A3</span>
+                            <span class="bg-green-100 text-green-800 text-[11px] font-bold px-2 py-0.5 rounded">98 điểm</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 md:p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded border dark:border-slate-700">
+                            <span class="font-bold text-xs md:text-sm"><span class="text-amber-600 font-black mr-2">#3</span>Lớp 10A2</span>
+                            <span class="bg-green-100 text-green-800 text-[11px] font-bold px-2 py-0.5 rounded">95 điểm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl card-custom-shadow border-t-4 border-hust-red dark:border-yellow-400 space-y-3 md:space-y-4">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 uppercase text-xs md:text-sm">
+                        Lịch Công Tác Tuần
+                    </h3>
+                    <ul class="text-xs space-y-2.5 text-slate-600 dark:text-slate-300">
+                        <li class="border-b dark:border-slate-700 pb-2">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 block">Thứ Hai:</span>
+                            Chào cờ đầu tuần & Sinh hoạt chủ nhiệm.
+                        </li>
+                        <li class="border-b dark:border-slate-700 pb-2">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 block">Thứ Năm:</span>
+                            Kiểm tra thi đua nề nếp đợt 1.
+                        </li>
+                        <li>
+                            <span class="font-bold text-slate-800 dark:text-slate-200 block">Thứ Bảy:</span>
+                            Họp giao ban Giám thị & Giáo viên chủ nhiệm.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SECTION CÂU LẠC BỘ & HOẠT ĐỘNG ĐOÀN HỘI -->
+    <section class="py-4 w-full">
+        <div class="text-center mb-4">
+            <h3 class="text-lg md:text-2xl font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide flex items-center justify-center gap-2">
+                CÂU LẠC BỘ & HOẠT ĐỘNG ĐOÀN HỘI
+            </h3>
+        </div>
+
+        <div class="relative w-full py-6 md:py-8">
+            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-36 md:h-44 bg-hust-red dark:bg-red-950 shadow-md z-0"></div>
+
+            <div class="relative z-10 max-w-5xl mx-auto px-3 sm:px-6 flex items-center justify-center">
+                
+                <button onclick="prevClub()" class="z-30 w-8 h-8 md:w-10 md:h-10 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-yellow-400 hover:text-slate-900 rounded-full shadow-xl flex items-center justify-center transition-colors duration-200 border dark:border-slate-700 mr-2 md:mr-4 shrink-0">
+                    <i class="fa-solid fa-chevron-left text-xs md:text-sm"></i>
+                </button>
+
+                <div id="club-card-container" class="club-transition hidden md:flex flex-row items-center justify-center w-full max-w-4xl relative">
+                    <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl card-custom-shadow border dark:border-slate-700 w-[52%] z-10 relative">
+                        <h4 id="club-title" class="text-xl md:text-2xl font-black text-hust-red dark:text-yellow-400 leading-tight mb-2"></h4>
+                        <p id="club-desc" class="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed min-h-[75px] md:min-h-[85px] mb-4 pr-6"></p>
+                        <div>
+                            <a id="club-link" href="/clb" class="inline-block bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-[10px] md:text-xs font-black px-4 py-2 rounded shadow uppercase transition-colors duration-200">
+                                XEM CHI TIẾT
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="w-[54%] h-64 md:h-72 rounded-2xl overflow-hidden card-custom-shadow border-4 border-white dark:border-slate-700 z-20 -ml-12 transform rotate-2">
+                        <img id="club-image" src="" alt="CLB THPT Dầu Giây" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <div id="club-card-mobile" class="club-transition flex md:hidden flex-col bg-white dark:bg-slate-800 rounded-2xl card-custom-shadow border dark:border-slate-700 overflow-hidden w-full max-w-sm relative z-10">
+                    <div class="w-full h-48 overflow-hidden relative">
+                        <img id="club-image-mobile" src="" alt="CLB THPT Dầu Giây" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 space-y-3">
+                        <h4 id="club-title-mobile" class="text-base font-black text-hust-red dark:text-yellow-400 leading-tight"></h4>
+                        <p id="club-desc-mobile" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                        <div>
+                            <a id="club-link-mobile" href="/clb" class="inline-block bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-[10px] font-black px-4 py-2 rounded shadow uppercase transition-colors duration-200">
+                                XEM CHI TIẾT
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="nextClub()" class="z-30 w-8 h-8 md:w-10 md:h-10 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-yellow-400 hover:text-slate-900 rounded-full shadow-xl flex items-center justify-center transition-colors duration-200 border dark:border-slate-700 ml-2 md:ml-4 shrink-0">
+                    <i class="fa-solid fa-chevron-right text-xs md:text-sm"></i>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="text-center space-y-2.5 mt-3 px-4">
+            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                Tham gia các câu lạc bộ để phát triển kỹ năng mềm, mở rộng bạn bè và kiến tạo những kỷ niệm đáng nhớ!
+            </p>
+            <div>
+                <a href="/clb" class="inline-flex items-center gap-2 bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-xs font-black px-5 py-2.5 rounded-xl shadow-md transition-colors duration-200 uppercase">
+                    <span>XEM TẤT CẢ CÂU LẠC BỘ & ĐOÀN HỘI</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION BẢNG VÀNG HỌC SINH GIỎI -->
+    <section class="py-10 bg-white/60 dark:bg-slate-800/50 backdrop-blur border-t border-b dark:border-slate-700/60 my-6">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center max-w-3xl mx-auto mb-8 space-y-2">
+                <h3 class="text-lg md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase flex items-center justify-center gap-2">
+                    BẢNG VÀNG HỌC SINH GIỎI
+                </h3>
+                <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    Tuyên dương những nỗ lực vượt bậc, tinh thần sáng tạo và tri thức xuất sắc của học sinh THPT Dầu Giây trên chặng đường chinh phục tri thức.
+                </p>
+            </div>
+
+            <div id="excellence-posts-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- SECTION CUỘC SỐNG TẠI THPT DẦU GIÂY -->
+    <section class="py-8 relative overflow-hidden border-b dark:border-slate-800">
+        <div class="text-center mb-3 relative z-10 px-4">
+            <h3 class="text-lg md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-wide flex items-center justify-center gap-2">
+                CUỘC SỐNG TẠI THPT DẦU GIÂY
+            </h3>
+        </div>
+
+        <div class="relative w-full py-4 md:py-6">
+            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-20 sm:h-28 md:h-36 bg-hust-red dark:bg-red-950 shadow-inner z-0"></div>
+
+            <div class="relative z-10 container mx-auto px-2 max-w-5xl">
+                <div class="hidden md:flex items-center justify-center -space-x-4">
+                    <div class="relative z-10 transform -rotate-3 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life1.jpg" onerror="this.onerror=null; this.src='/image/life1.jpg';" alt="Cuộc sống 1" class="w-full h-full object-cover">
+                    </div>
+                    <div class="relative z-20 transform rotate-2 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life2.jpg" onerror="this.onerror=null; this.src='/image/life2.jpg';" alt="Cuộc sống 2" class="w-full h-full object-cover">
+                    </div>
+                    <div class="relative z-10 transform -rotate-2 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life3.jpg" onerror="this.onerror=null; this.src='/image/life3.jpg';" alt="Cuộc sống 3" class="w-full h-full object-cover">
+                    </div>
+                    <div class="relative z-20 transform rotate-3 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life4.jpg" onerror="this.onerror=null; this.src='/image/life4.jpg';" alt="Cuộc sống 4" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <div class="flex md:hidden items-center justify-center px-4">
+                    <div class="relative z-10 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-full max-w-xs h-64">
+                        <img src="/IMAGE/life1.jpg" onerror="this.onerror=null; this.src='/image/life1.jpg';" alt="Cuộc sống THPT Dầu Giây" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center space-y-3 mt-3 px-4 relative z-10 max-w-2xl mx-auto">
+            <p class="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                Khám phá môi trường học tập sôi động, hơn 10+ hoạt động học sinh hấp dẫn, trải nghiệm tri thức và vô vàn kỷ niệm đáng nhớ tại THPT Dầu Giây.
+            </p>
+            <div>
+                <a href="/clb" class="inline-block bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-black text-xs md:text-sm px-6 py-2.5 rounded-lg shadow-md transition-colors duration-200 uppercase tracking-wide">
+                    Đời Sống Học Sinh
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL XEM CHI TIẾT BÀI VIẾT -->
+    <div id="post-detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-slate-900/70 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border dark:border-slate-700 animate-pop-in relative p-5 md:p-8 space-y-4">
+            
+            <button onclick="closePostModal()" class="absolute top-4 right-4 text-xs font-bold px-3 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-red-600 hover:text-white rounded-full uppercase transition">
+                Đóng
+            </button>
+
+            <div class="space-y-2">
+                <span id="modal-category" class="bg-red-100 dark:bg-red-900/50 text-hust-red dark:text-yellow-400 font-black text-[11px] px-3 py-1 rounded-full uppercase inline-block"></span>
+                <h2 id="modal-title" class="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 leading-tight"></h2>
+                <div class="flex items-center text-xs text-slate-500 dark:text-slate-400 gap-4 pt-1 border-b dark:border-slate-700 pb-3">
+                    <span>Tác giả: <strong id="modal-author"></strong></span>
+                    <span><span id="modal-date"></span></span>
+                </div>
+            </div>
+
+            <div id="modal-image-container" class="rounded-xl overflow-hidden shadow-md max-h-[380px]">
+                <img id="modal-image" src="" class="w-full h-full object-cover">
+            </div>
+
+            <div id="modal-content" class="text-sm md:text-base text-slate-700 dark:text-slate-200 leading-relaxed space-y-3 whitespace-pre-line pt-2"></div>
+
+            <div class="pt-4 border-t dark:border-slate-700 flex justify-between items-center">
+                <div id="modal-admin-actions"></div>
+                <button onclick="closePostModal()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-5 py-2.5 rounded-lg uppercase ml-auto">Đóng bài viết</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================
+         PHẦN FOOTER VÀ CHATBOT SẼ ĐƯỢC TỰ ĐỘNG CHÈN TẠI ĐÂY
+         QUA FILE /layout.js
+         ======================================================== -->
+
+    <!-- 1. GẮN FILE LAYOUT DÙNG CHUNG Ở ĐÂY -->
+    <script src="/layout.js"></script>
+
+    <!-- 2. JAVASCRIPT RIÊNG CỦA TRANG INDEX (POSTS, SLIDER, MODAL) -->
+    <script>
+        let currentNewsPosts = [];
+        let currentExcellencePosts = [];
+
+        const clubsData = [
+            {
+                name: "CLB Thể Thao & Đội Nhóm",
+                desc: "Rèn luyện thể lực với bóng rổ, cầu lông, bơi lội và bóng đá. Chinh phục các giải thi đấu cấp huyện, cấp tỉnh và nâng cao tầm vóc học sinh.",
+                image: "/IMAGE/nentruongto3.jpg",
+                link: "/clb"
+            },
+            {
+                name: "CLB Truyền Thông & Sự Kiện",
+                desc: "Nơi ghi lại những khoảnh khắc đẹp nhất của THPT Dầu Giây. Sáng tạo nội dung, nhiếp ảnh, dựng video và điều phối các chương trình lớn nhỏ.",
+                image: "/IMAGE/nentruongto.jpg",
+                link: "/clb"
+            },
+            {
+                name: "CLB STEM & Lập Trình",
+                desc: "Khám phá công nghệ, thiết kế game, lập trình web và sáng tạo robot. Sân chơi nuôi dưỡng đam mê kỹ thuật và tư duy logic cho đoàn viên.",
+                image: "/IMAGE/nentruongto2.jpg",
+                link: "/clb"
+            },
+            {
+                name: "CLB Tiếng Anh (English Club)",
+                desc: "Môi trường giao tiếp ngoại ngữ phản xạ tự nhiên, săn học bổng, luyện thi IELTS và rèn luyện kỹ năng thuyết trình tự tin trước đám đông.",
+                image: "/IMAGE/nentruongto.jpg",
+                link: "/clb"
+            }
+        ];
+
+        let currentClubIndex = 0;
+        let isSwitchingClub = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkIndexAuthorizations();
+            loadSlogan();
+            loadPosts();
+            loadExcellencePosts();
+            startImageSlider();
+            renderClubSliderDirectly();
+        });
+
+        // Chỉ BGH, Giám thị, Quản sinh, Kiểm soát mới có quyền Đăng/Xóa bài viết
+        function isAuthorizedUser() {
+            const userRole = (localStorage.getItem('user_role') || '').toLowerCase();
+            const allowedRoles = [
+                'admin', 
+                'hieutruong', 
+                'bgh', 
+                'phohieutruong', 
+                'giamthi', 
+                'quansinh', 
+                'kiemsoat', 
+                'doantruong', 
+                'doan'
+            ];
+            return allowedRoles.includes(userRole);
+        }
+
+        function isAdminOrPrincipal() {
+            const userRole = (localStorage.getItem('user_role') || '').toLowerCase();
+            return ['admin', 'hieutruong', 'bgh', 'phohieutruong'].includes(userRole);
+        }
+
+        function checkIndexAuthorizations() {
+            const createPostCard = document.getElementById('create-post-card');
+            const adminSloganBtn = document.getElementById('admin-slogan-btn');
+
+            if (isAuthorizedUser()) {
+                if (createPostCard) createPostCard.classList.remove('hidden');
+            } else {
+                if (createPostCard) createPostCard.classList.add('hidden');
+            }
+
+            if (isAdminOrPrincipal()) {
+                if (adminSloganBtn) adminSloganBtn.classList.remove('hidden');
+            }
+        }
+
+        function startImageSlider() {
+            const slides = document.querySelectorAll('.hero-slide');
+            if (!slides || slides.length === 0) return;
+
+            let currentIndex = 0;
+            setInterval(() => {
+                slides[currentIndex].classList.remove('opacity-100');
+                slides[currentIndex].classList.add('opacity-0');
+
+                currentIndex = (currentIndex + 1) % slides.length;
+
+                slides[currentIndex].classList.remove('opacity-0');
+                slides[currentIndex].classList.add('opacity-100');
+            }, 8000);
+        }
+
+        function renderClubSliderDirectly() {
+            const club = clubsData[currentClubIndex];
+            
+            const cTitle = document.getElementById('club-title');
+            const cDesc = document.getElementById('club-desc');
+            const cLink = document.getElementById('club-link');
+            const clubImg = document.getElementById('club-image');
+            
+            if(cTitle) cTitle.innerText = club.name;
+            if(cDesc) cDesc.innerText = club.desc;
+            if(cLink) cLink.href = club.link;
+            if(clubImg) {
+                clubImg.src = club.image;
+                clubImg.onerror = () => { clubImg.src = '/IMAGE/nentruongto.jpg'; };
+            }
+
+            const cTitleMob = document.getElementById('club-title-mobile');
+            const cDescMob = document.getElementById('club-desc-mobile');
+            const cLinkMob = document.getElementById('club-link-mobile');
+            const clubImgMob = document.getElementById('club-image-mobile');
+
+            if(cTitleMob) cTitleMob.innerText = club.name;
+            if(cDescMob) cDescMob.innerText = club.desc;
+            if(cLinkMob) cLinkMob.href = club.link;
+            if(clubImgMob) {
+                clubImgMob.src = club.image;
+                clubImgMob.onerror = () => { clubImgMob.src = '/IMAGE/nentruongto.jpg'; };
+            }
+        }
+
+        function changeClubSmoothly(newIndex) {
+            if (isSwitchingClub) return;
+            isSwitchingClub = true;
+
+            const cardContainerPC = document.getElementById('club-card-container');
+            const cardContainerMob = document.getElementById('club-card-mobile');
+            
+            if(cardContainerPC) cardContainerPC.classList.add('club-fade-out');
+            if(cardContainerMob) cardContainerMob.classList.add('club-fade-out');
+
+            setTimeout(() => {
+                currentClubIndex = newIndex;
+                renderClubSliderDirectly();
+                if(cardContainerPC) cardContainerPC.classList.remove('club-fade-out');
+                if(cardContainerMob) cardContainerMob.classList.remove('club-fade-out');
+                
+                setTimeout(() => {
+                    isSwitchingClub = false;
+                }, 350);
+            }, 180);
+        }
+
+        function prevClub() {
+            const newIndex = (currentClubIndex - 1 + clubsData.length) % clubsData.length;
+            changeClubSmoothly(newIndex);
+        }
+
+        function nextClub() {
+            const newIndex = (currentClubIndex + 1) % clubsData.length;
+            changeClubSmoothly(newIndex);
+        }
+
+        async function loadSlogan() {
+            try {
+                const res = await fetch('/api/slogan');
+                const data = await res.json();
+                const sloganDisplay = document.getElementById('slogan-display');
+                if (data.slogan && sloganDisplay) {
+                    sloganDisplay.innerText = `"${data.slogan}"`;
+                }
+            } catch (err) {
+                console.error("Lỗi tải Slogan:", err);
+            }
+        }
+
+        async function editSlogan() {
+            const sloganDisplay = document.getElementById('slogan-display');
+            if(!sloganDisplay) return;
+            const current = sloganDisplay.innerText.replace(/^"|"$/g, '');
+            const newSlogan = prompt("Nhập thông điệp / Slogan mới:", current);
+            if (newSlogan) {
+                try {
+                    const res = await fetch('/api/slogan', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ slogan: newSlogan })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        sloganDisplay.innerText = `"${data.slogan}"`;
+                    }
+                } catch (err) {
+                    alert("Không thể cập nhật slogan lên Server!");
+                }
+            }
+        }
+
+        async function loadPosts() {
+            try {
+                const res = await fetch('/api/posts');
+                currentNewsPosts = await res.json();
+                renderPosts(currentNewsPosts);
+            } catch (err) {
+                console.error("Lỗi tải bài viết từ server:", err);
+            }
+        }
+
+        function renderPosts(posts) {
+            const feed = document.getElementById('posts-feed');
+            if(!feed) return;
+
+            if (!posts || posts.length === 0) {
+                feed.innerHTML = `<div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow text-center text-xs text-slate-500">Chưa có bài viết tin tức nào.</div>`;
+                return;
+            }
+
+            const mainPost = posts[0];
+            const subPosts = posts.slice(1, 4);
+            const canDelete = isAuthorizedUser();
+
+            const mainDeleteBtn = canDelete ? `
+                <button onclick="deletePost(${mainPost.id}, 'news', event)" class="bg-red-100 hover:bg-red-600 text-red-700 hover:text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-sm uppercase">
+                    Xóa
+                </button>
+            ` : '';
+
+            let subPostsHtml = '';
+            if (subPosts.length > 0) {
+                subPostsHtml = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-2">
+                        ${subPosts.map(post => `
+                            <div onclick="viewPostDetail(${post.id}, 'news')" class="bg-white dark:bg-slate-800 rounded-xl card-custom-shadow border dark:border-slate-700 overflow-hidden cursor-pointer group hover:shadow-xl transition duration-200 flex flex-col justify-between">
+                                <div>
+                                    <div class="h-28 overflow-hidden relative">
+                                        <img src="${post.image || '/IMAGE/nentruongto.jpg'}" onerror="this.onerror=null; this.src='/IMAGE/nentruongto.jpg';" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                        <span class="absolute top-2 left-2 bg-hust-red text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow">
+                                            ${post.category || 'TIN TỨC'}
+                                        </span>
+                                    </div>
+                                    <div class="p-3 space-y-1.5">
+                                        <h5 class="font-bold text-slate-900 dark:text-slate-100 text-xs group-hover:text-hust-red dark:group-hover:text-yellow-400 transition leading-snug line-clamp-2">
+                                            ${post.title}
+                                        </h5>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
+                                            ${post.content}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="px-3 pb-2.5 pt-1 flex justify-between items-center text-[10px] text-slate-400 border-t dark:border-slate-700/60 mt-1">
+                                    <span>${post.date}</span>${canDelete ? `
+                                        <button onclick="deletePost(${post.id}, 'news', event)" class="text-red-600 hover:text-red-800 font-bold hover:underline uppercase">
+                                            Xóa
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            feed.innerHTML = `
+                <div onclick="viewPostDetail(${mainPost.id}, 'news')" class="bg-white dark:bg-slate-800 rounded-2xl card-custom-shadow border dark:border-slate-700 overflow-hidden cursor-pointer group hover:shadow-2xl transition duration-300 relative">
+                    <div class="relative h-52 sm:h-60 md:h-64 overflow-hidden">
+                        <img src="${mainPost.image || '/IMAGE/nentruongto.jpg'}" onerror="this.onerror=null; this.src='/IMAGE/nentruongto.jpg';" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 left-3 bg-hust-red text-white text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase shadow">
+                            ${mainPost.category || 'MỚI NHẤT'}
+                        </span>
+                    </div>
+                    <div class="p-4 sm:p-5 space-y-2.5">
+                        <h4 class="font-black text-slate-900 dark:text-slate-100 text-base sm:text-xl group-hover:text-hust-red dark:group-hover:text-yellow-400 transition leading-snug line-clamp-2">
+                            ${mainPost.title}
+                        </h4>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
+                            ${mainPost.content}
+                        </p>
+                        <div class="text-[11px] text-slate-400 font-medium pt-2.5 border-t dark:border-slate-700 flex flex-wrap justify-between items-center gap-2">
+                            <span>Thời gian: ${mainPost.date}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-hust-red dark:text-yellow-400 uppercase">Tác giả: ${mainPost.author}</span>
+                                ${mainDeleteBtn}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${subPostsHtml}
+
+                <div class="text-center pt-2">
+                    <a href="/tintuc" class="inline-flex items-center gap-2 bg-white dark:bg-slate-800 hover:bg-yellow-400 hover:text-slate-900 hover:border-yellow-400 text-hust-red dark:text-yellow-400 border-2 border-hust-red dark:border-slate-700 font-black text-xs px-6 py-2.5 rounded-xl card-custom-shadow transition-all duration-300 uppercase tracking-wider">
+                        <span>Xem thêm các bài viết khác</span>
+                    </a>
+                </div>
+            `;
+        }
+
+        async function loadExcellencePosts() {
+            try {
+                const res = await fetch('/api/excellence-posts');
+                currentExcellencePosts = await res.json();
+                renderExcellencePosts(currentExcellencePosts);
+            } catch (err) {
+                console.error("Lỗi tải danh sách vinh danh:", err);
+            }
+        }
+
+        function renderExcellencePosts(posts) {
+            const grid = document.getElementById('excellence-posts-grid');
+            if(!grid) return;
+
+            if (!posts || posts.length === 0) {
+                grid.innerHTML = `<div class="col-span-3 bg-white dark:bg-slate-800 p-6 rounded-lg text-center text-xs text-slate-500">Chưa có bài viết vinh danh nào.</div>`;
+                return;
+            }
+
+            const displayPosts = posts.slice(0, 3);
+            const canDelete = isAuthorizedUser();
+
+            grid.innerHTML = displayPosts.map(post => `
+                <div onclick="viewPostDetail(${post.id}, 'excellence')" class="bg-white dark:bg-slate-800 rounded-2xl card-custom-shadow border-2 border-transparent hover:border-green-500 overflow-hidden flex flex-col justify-between cursor-pointer group hover:-translate-y-1 transition-all duration-300 relative">
+                    <div>
+                        <div class="h-44 overflow-hidden relative border-b dark:border-slate-700">
+                            <img src="${post.image || '/IMAGE/nentruongto.jpg'}" onerror="this.onerror=null; this.src='/IMAGE/nentruongto.jpg';" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+
+                        <div class="p-5 space-y-2">
+                            <div class="flex items-center text-[11px] font-bold text-slate-500 dark:text-slate-400 gap-1.5">
+                                <span class="text-slate-900 dark:text-slate-100 font-extrabold">${post.title.split(' ')[0]} ${post.title.split(' ')[1] || ''}</span>
+                                <span>•</span>
+                                <span class="text-hust-red dark:text-yellow-400">${post.date}</span>
+                            </div>
+                            <h4 class="font-black text-slate-900 dark:text-slate-100 text-sm md:text-base group-hover:text-hust-red dark:group-hover:text-yellow-400 transition leading-snug line-clamp-2">
+                                ${post.title}
+                            </h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">
+                                ${post.content}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="px-5 pb-4 pt-0 flex justify-between items-center text-[10px] text-slate-400 border-t dark:border-slate-700/60 mt-2 pt-2">
+                        <span class="font-bold text-yellow-600 dark:text-yellow-400 uppercase">${post.category || 'Vinh danh'}</span>
+                        ${canDelete ? `
+                            <button onclick="deletePost(${post.id}, 'excellence', event)" class="text-red-600 hover:text-red-800 font-bold hover:underline uppercase">
+                                Xóa
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewPostDetail(id, type) {
+            let post = null;
+            if (type === 'news') {
+                post = currentNewsPosts.find(p => p.id == id);
+            } else {
+                post = currentExcellencePosts.find(p => p.id == id);
+            }
+
+            if (!post) return;
+
+            document.getElementById('modal-category').innerText = post.category || (type === 'news' ? 'TIN TỨC' : 'VINH DANH');
+            document.getElementById('modal-title').innerText = post.title;
+            document.getElementById('modal-author').innerText = post.author || 'Ban Giám Hiệu / Giám Thị';
+            document.getElementById('modal-date').innerText = post.date || '';
+            
+            const modalImg = document.getElementById('modal-image');
+            if (post.image) {
+                modalImg.src = post.image;
+                modalImg.onerror = () => { modalImg.src = '/IMAGE/nentruongto.jpg'; };
+                document.getElementById('modal-image-container').classList.remove('hidden');
+            } else {
+                document.getElementById('modal-image-container').classList.add('hidden');
+            }
+
+            document.getElementById('modal-content').innerText = post.content;
+
+            const adminActions = document.getElementById('modal-admin-actions');
+            if (isAuthorizedUser()) {
+                adminActions.innerHTML = `
+                    <button onclick="deletePost(${post.id}, '${type}', event); closePostModal();" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2 rounded-lg transition flex items-center gap-1.5 uppercase">
+                        Xóa Bài Viết
+                    </button>
+                `;
+            } else {
+                adminActions.innerHTML = '';
+            }
+
+            document.getElementById('post-detail-modal').classList.remove('hidden');
+        }
+
+        function closePostModal() {
+            document.getElementById('post-detail-modal').classList.add('hidden');
+        }
+
+        async function deletePost(id, type, event) {
+            if (event) event.stopPropagation();
+            if (!confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
+
+            try {
+                const endpoint = type === 'news' ? `/api/posts/${id}` : `/api/excellence-posts/${id}`;
+                const res = await fetch(endpoint, { method: 'DELETE' });
+                if (res.ok) {
+                    if (type === 'news') {
+                        currentNewsPosts = currentNewsPosts.filter(p => p.id != id);
+                        renderPosts(currentNewsPosts);
+                    } else {
+                        currentExcellencePosts = currentExcellencePosts.filter(p => p.id != id);
+                        renderExcellencePosts(currentExcellencePosts);
+                    }
+                } else {
+                    alert('Không thể xóa bài viết. Vui lòng thử lại!');
+                }
+            } catch (err) {
+                console.error('Lỗi khi xóa bài viết:', err);
+            }
+        }
+
+        const createForm = document.getElementById('create-post-form');
+        if (createForm) {
+            createForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!isAuthorizedUser()) {
+                    alert("Bạn không có quyền đăng bài!");
+                    return;
+                }
+
+                const title = document.getElementById('post-title').value;
+                const content = document.getElementById('post-content').value;
+                const category = document.getElementById('post-category').value;
+                const targetRadio = document.querySelector('input[name="post_target"]:checked');
+                const target = targetRadio ? targetRadio.value : 'news';
+                const imageFileInput = document.getElementById('post-image-file');
+
+                let imagePath = '/IMAGE/nentruongto.jpg';
+                if (imageFileInput && imageFileInput.files && imageFileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = async (ev) => {
+                        imagePath = ev.target.result;
+                        await submitPostToServer(title, content, category, target, imagePath);
+                    };
+                    reader.readAsDataURL(imageFileInput.files[0]);
+                    return;
+                }
+
+                await submitPostToServer(title, content, category, target, imagePath);
+            });
+        }
+
+        async function submitPostToServer(title, content, category, target, image) {
+            const userName = localStorage.getItem('user_name') || 'Ban BGH / Giám Thị';
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN');
+
+            const newPostData = {
+                title,
+                content,
+                category,
+                image,
+                author: userName,
+                date: dateStr
+            };
+
+            try {
+                const endpoint = target === 'news' ? `/api/posts` : `/api/excellence-posts`;
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newPostData)
+                });
+
+                if (res.ok) {
+                    alert('Đã xuất bản bài viết thành công!');
+                    document.getElementById('create-post-form').reset();
+                    if (target === 'news') {
+                        loadPosts();
+                    } else {
+                        loadExcellencePosts();
+                    }
+                } else {
+                    alert('Có lỗi xảy ra khi xuất bản bài viết!');
+                }
+            } catch (err) {
+                console.error('Lỗi khi đăng bài:', err);
+            }
+        }
+    </script>
+</body>
+</html>

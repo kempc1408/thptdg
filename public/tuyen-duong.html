@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ứng dụng SPA Vanilla JS</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; padding: 20px; background-color: #f4f6f9; }
+    
+    nav { background: #007bff; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    nav a { color: white; text-decoration: none; margin-right: 20px; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+
+    #content { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .page-title { margin-top: 0; color: #333; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-link">Trang chủ</a>
+    <a href="/tuyen-duong" class="nav-link">Tuyên dương</a>
+    <a href="/khen-thuong" class="nav-link">Khen thưởng</a>
+  </nav>
+
+  <main id="content"></main>
+
+  <script>
+    // Định nghĩa nội dung cho từng trang
+    const routes = {
+      '/': `
+        <h1 class="page-title">Trang chủ</h1>
+        <p>Chào mừng bạn đến với hệ thống quản lý!</p>
+      `,
+      '/tuyen-duong': `
+        <h1 class="page-title">Danh sách Tuyên dương</h1>
+        <p>Danh sách các cá nhân và tập thể xuất sắc được tuyên dương trong tháng.</p>
+      `,
+      '/khen-thuong': `
+        <h1 class="page-title">Danh sách Khen thưởng</h1>
+        <p>Thông tin các quyết định khen thưởng mới nhất.</p>
+      `
+    };
+
+    // Hàm cập nhật nội dung giao diện theo đường dẫn hiện tại
+    function render() {
+      const path = window.location.pathname;
+      const html = routes[path] || `
+        <h1 class="page-title">404 - Không tìm thấy trang</h1>
+        <p>Đường dẫn này không tồn tại trên hệ thống.</p>
+      `;
+      document.getElementById('content').innerHTML = html;
+    }
+
+    // Hàm chuyển trang không làm tải lại trình duyệt
+    function navigateTo(url) {
+      window.history.pushState({}, '', url);
+      render();
+    }
+
+    // Bắt sự kiện click vào tất cả thẻ a có class "nav-link"
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.nav-link')) {
+        e.preventDefault();
+        const href = e.target.getAttribute('href');
+        navigateTo(href);
+      }
+    });
+
+    // Xử lý khi bấm nút Back / Forward trên trình duyệt
+    window.addEventListener('popstate', render);
+
+    // Hiển thị nội dung đúng ngay lần đầu tải trang
+    document.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>

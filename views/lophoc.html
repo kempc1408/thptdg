@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THPT Dầu Giây - Quản Lý Lớp Học & Ban Cán Sự</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: {
+                            red: '#990000',
+                            darkred: '#750000',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .card-custom-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
+        }
+
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            pointer-events: none;
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200 overflow-x-hidden">
+
+    <!-- ==========================================
+         TOPBAR CHUẨN 100% TỪ INDEX
+         ========================================== -->
+    <div class="bg-slate-900 text-slate-300 text-[11px] md:text-xs py-1.5 px-3 md:px-8 flex justify-between items-center border-b border-slate-800 relative z-50">
+        <div class="flex items-center space-x-4">
+            <span class="truncate"><i class="fa-solid fa-phone text-yellow-500 mr-1.5"></i>02513762810</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-envelope text-yellow-500 mr-1.5"></i>c3.daugiay@dongnai.edu.vn</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="text-yellow-400 font-semibold uppercase tracking-wider hidden lg:inline">Cổng Thông Tin Học Tập & Nề Nếp</span>
+            <button id="theme-toggle" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[11px] font-bold flex items-center gap-1 border border-slate-700">
+                <i id="theme-toggle-dark-icon" class="fa-solid fa-moon"></i>
+                <i id="theme-toggle-light-icon" class="fa-solid fa-sun hidden"></i>
+                <span id="theme-text" class="hidden sm:inline">Giao diện</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         HEADER CHUẨN 100% TỪ INDEX
+         ========================================== -->
+    <header class="bg-white/95 backdrop-blur dark:bg-slate-800 border-b dark:border-slate-700 shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-2 md:space-x-3">
+                <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" alt="Logo THPT Dầu Giây" class="w-10 h-10 md:w-14 md:h-14 object-cover rounded-full border-2 border-red-800 shadow">
+                <div>
+                    <h1 class="text-base sm:text-xl md:text-2xl font-black text-hust-red dark:text-red-400 tracking-tight uppercase leading-tight">THPT Dầu Giây</h1>
+                    <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium tracking-widest uppercase">Dau Giay High School Portal</p>
+                </div>
+            </a>
+            
+            <div id="user-area" class="flex items-center gap-2"></div>
+        </div>
+
+        <!-- ==========================================
+             THANH MENU ĐỘNG ĐẦY ĐỦ CỦA INDEX
+             ========================================== -->
+        <nav class="bg-hust-red text-white shadow-inner relative z-50">
+            <div id="main-nav-container" class="container mx-auto px-2 flex flex-wrap space-x-1 text-xs md:text-sm font-bold uppercase relative overflow-visible">
+                <!-- Javascript sẽ tự động render đầy đủ các mục menu -->
+            </div>
+        </nav>
+    </header>
+
+    <!-- ==========================================
+         KHU VỰC QUẢN LÝ LỚP HỌC & BAN CÁN SỰ
+         ========================================== -->
+    <main class="container mx-auto px-3 md:px-6 py-6 flex-grow space-y-6">
+
+        <!-- THÔNG TIN LỚP & CHỌN LỚP CHỦ NHIỆM -->
+        <div class="bg-white dark:bg-slate-800 p-5 md:p-6 rounded-2xl card-custom-shadow border-l-4 border-hust-red dark:border-yellow-400 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-yellow-300 font-black text-xs px-2.5 py-1 rounded-lg uppercase">
+                        Quản Lý Học Sinh & Cán Sự
+                    </span>
+                    <span id="current-teacher-badge" class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                        GVCN: Đang xác thực...
+                    </span>
+                </div>
+                <h2 id="current-class-heading" class="text-xl md:text-3xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight mt-1 flex items-center gap-2">
+                    <i class="fa-solid fa-users-rectangle text-hust-red dark:text-yellow-400"></i> Lớp Học: <span id="display-class-name" class="text-hust-red dark:text-yellow-400">Chưa chọn</span>
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Thầy/Cô chủ nhiệm có quyền bổ nhiệm và phân công: <strong>1 Lớp trưởng, 2 Lớp phó, 1 Bí thư, 2 Phó bí thư và 2 Sao đỏ</strong>.
+                </p>
+            </div>
+
+            <!-- Nút chọn lớp dự phòng nếu là BGH hoặc GVCN nhiều lớp -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-700/60 p-2 rounded-xl border dark:border-slate-600">
+                    <label class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-300 whitespace-nowrap">Đổi Lớp:</label>
+                    <select id="select-class-view" onchange="onSelectClassChange(this.value)" class="bg-white dark:bg-slate-800 border dark:border-slate-600 rounded-lg text-xs font-black px-3 py-1.5 focus:ring-2 focus:ring-red-800 text-slate-800 dark:text-slate-100">
+                        <option value="">-- Đang nạp danh sách lớp --</option>
+                    </select>
+                </div>
+                <span id="class-student-count-badge" class="bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-yellow-300 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-amber-200 dark:border-amber-700/50 text-center">
+                    Sĩ số: 0 học sinh
+                </span>
+            </div>
+        </div>
+
+        <!-- BẢNG TỔNG QUAN BAN CÁN SỰ & ĐOÀN THỂ (DASHBOARD) -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+            <div class="flex justify-between items-center border-b dark:border-slate-700 pb-3">
+                <h3 class="font-black text-base md:text-lg text-slate-900 dark:text-slate-100 uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-crown text-yellow-500"></i> Ban Cán Sự Lớp & Đội Ngũ Đoàn - Sao Đỏ
+                </h3>
+                <span class="text-[11px] font-bold text-slate-400">Đã kích hoạt quyền quản lý lớp</span>
+            </div>
+
+            <!-- THẺ ĐẠI DIỆN CÁC CHỨC VỤ QUY ĐỊNH -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+                
+                <!-- 1. LỚP TRƯỞNG (1 người) -->
+                <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3.5 border-t-4 border-yellow-500 border-x border-b dark:border-slate-600 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black uppercase text-yellow-600 dark:text-yellow-400 flex items-center gap-1">
+                            <i class="fa-solid fa-star"></i> Lớp Trưởng
+                        </span>
+                        <span id="count-loptruong" class="text-[10px] font-black bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">0/1</span>
+                    </div>
+                    <div id="list-loptruong" class="min-h-[44px] flex flex-col justify-center text-xs font-bold text-slate-700 dark:text-slate-200">
+                        <span class="text-slate-400 font-normal italic text-[11px]">Chưa bổ nhiệm</span>
+                    </div>
+                </div>
+
+                <!-- 2. LỚP PHÓ (Tối đa 2 người) -->
+                <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3.5 border-t-4 border-blue-500 border-x border-b dark:border-slate-600 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black uppercase text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                            <i class="fa-solid fa-user-shield"></i> Lớp Phó (Max 2)
+                        </span>
+                        <span id="count-loppho" class="text-[10px] font-black bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">0/2</span>
+                    </div>
+                    <div id="list-loppho" class="min-h-[44px] flex flex-col justify-center text-xs font-bold text-slate-700 dark:text-slate-200 space-y-1">
+                        <span class="text-slate-400 font-normal italic text-[11px]">Chưa bổ nhiệm</span>
+                    </div>
+                </div>
+
+                <!-- 3. BÍ THƯ (1 người) -->
+                <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3.5 border-t-4 border-red-600 border-x border-b dark:border-slate-600 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black uppercase text-red-600 dark:text-red-400 flex items-center gap-1">
+                            <i class="fa-solid fa-flag"></i> Bí Thư Chi Đoàn
+                        </span>
+                        <span id="count-bithu" class="text-[10px] font-black bg-red-100 text-red-800 px-2 py-0.5 rounded-full">0/1</span>
+                    </div>
+                    <div id="list-bithu" class="min-h-[44px] flex flex-col justify-center text-xs font-bold text-slate-700 dark:text-slate-200">
+                        <span class="text-slate-400 font-normal italic text-[11px]">Chưa bổ nhiệm</span>
+                    </div>
+                </div>
+
+                <!-- 4. PHÓ BÍ THƯ (Tối đa 2 người) -->
+                <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3.5 border-t-4 border-orange-500 border-x border-b dark:border-slate-600 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black uppercase text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                            <i class="fa-solid fa-bullhorn"></i> Phó Bí Thư (Max 2)
+                        </span>
+                        <span id="count-phobithu" class="text-[10px] font-black bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">0/2</span>
+                    </div>
+                    <div id="list-phobithu" class="min-h-[44px] flex flex-col justify-center text-xs font-bold text-slate-700 dark:text-slate-200 space-y-1">
+                        <span class="text-slate-400 font-normal italic text-[11px]">Chưa bổ nhiệm</span>
+                    </div>
+                </div>
+
+                <!-- 5. SAO ĐỎ (Tối đa 2 người) -->
+                <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3.5 border-t-4 border-purple-600 border-x border-b dark:border-slate-600 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-black uppercase text-purple-600 dark:text-purple-400 flex items-center gap-1">
+                            <i class="fa-solid fa-shield-halved"></i> Đội Sao Đỏ (Max 2)
+                        </span>
+                        <span id="count-saodo" class="text-[10px] font-black bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">0/2</span>
+                    </div>
+                    <div id="list-saodo" class="min-h-[44px] flex flex-col justify-center text-xs font-bold text-slate-700 dark:text-slate-200 space-y-1">
+                        <span class="text-slate-400 font-normal italic text-[11px]">Chưa bổ nhiệm</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BẢNG DANH SÁCH TẤT CẢ HỌC SINH CỦA LỚP & ĐIỀU CHỈNH CHỨC VỤ -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b dark:border-slate-700 pb-3">
+                <div>
+                    <h3 class="font-black text-base md:text-lg text-slate-900 dark:text-slate-100 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-address-book text-hust-red dark:text-yellow-400"></i> Danh Sách Học Sinh Lớp & Thao Tác Phân Quyền
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Nhấp vào nút chức vụ của từng học sinh để điều chỉnh vai trò trực tiếp.</p>
+                </div>
+                
+                <div class="w-full sm:w-72">
+                    <input type="text" id="search-student-input" onkeyup="filterClassStudents()" placeholder="Tìm theo tên học sinh, email..." class="w-full border dark:border-slate-600 dark:bg-slate-700 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-800">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b dark:border-slate-600">
+                            <th class="p-3">STT</th>
+                            <th class="p-3">Học Sinh</th>
+                            <th class="p-3">Ngày Sinh</th>
+                            <th class="p-3">Tài Khoản (Email)</th>
+                            <th class="p-3">Chức Vụ Lớp</th>
+                            <th class="p-3">Quyền Hệ Thống</th>
+                            <th class="p-3 text-center">Điều Chỉnh Vai Trò</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-students-tbody" class="divide-y dark:divide-slate-700">
+                        <!-- Render JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==========================================
+         MODAL PHÂN CÔNG CHỨC VỤ CHO HỌC SINH
+         ========================================== -->
+    <div id="role-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 card-custom-shadow border dark:border-slate-700 relative">
+            <button onclick="closeRoleModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div>
+                <span class="text-[10px] font-black uppercase text-hust-red dark:text-yellow-400">Phân Công Ban Cán Sự</span>
+                <h4 id="modal-student-name" class="text-lg font-black text-slate-900 dark:text-slate-100"></h4>
+                <p id="modal-student-email" class="text-xs text-slate-500 font-mono"></p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300">Chọn vai trò bổ nhiệm mới:</label>
+                
+                <div class="grid grid-cols-1 gap-2 text-xs">
+                    <button onclick="selectNewRole('Lớp Trưởng', 'loptruong')" class="flex items-center justify-between p-3 rounded-xl border hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950/30 transition text-left">
+                        <span class="font-bold text-yellow-700 dark:text-yellow-400"><i class="fa-solid fa-star mr-2"></i>Lớp Trưởng</span>
+                        <span class="text-[10px] text-slate-400">(Tối đa 1 người)</span>
+                    </button>
+
+                    <button onclick="selectNewRole('Lớp Phó', 'loppho')" class="flex items-center justify-between p-3 rounded-xl border hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition text-left">
+                        <span class="font-bold text-blue-700 dark:text-blue-400"><i class="fa-solid fa-user-shield mr-2"></i>Lớp Phó</span>
+                        <span class="text-[10px] text-slate-400">(Tối đa 2 người)</span>
+                    </button>
+
+                    <button onclick="selectNewRole('Bí Thư', 'bithulop')" class="flex items-center justify-between p-3 rounded-xl border hover:border-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition text-left">
+                        <span class="font-bold text-red-700 dark:text-red-400"><i class="fa-solid fa-flag mr-2"></i>Bí Thư Chi Đoàn</span>
+                        <span class="text-[10px] text-slate-400">(Tối đa 1 người)</span>
+                    </button>
+
+                    <button onclick="selectNewRole('Phó Bí Thư', 'phobithu')" class="flex items-center justify-between p-3 rounded-xl border hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition text-left">
+                        <span class="font-bold text-orange-700 dark:text-orange-400"><i class="fa-solid fa-bullhorn mr-2"></i>Phó Bí Thư</span>
+                        <span class="text-[10px] text-slate-400">(Tối đa 2 người)</span>
+                    </button>
+
+                    <button onclick="selectNewRole('Sao Đỏ', 'saodo')" class="flex items-center justify-between p-3 rounded-xl border hover:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950/30 transition text-left">
+                        <span class="font-bold text-purple-700 dark:text-purple-400"><i class="fa-solid fa-shield-halved mr-2"></i>Đội Sao Đỏ</span>
+                        <span class="text-[10px] text-slate-400">(Tối đa 2 người)</span>
+                    </button>
+
+                    <button onclick="selectNewRole('Học Sinh', 'hocsinh')" class="flex items-center justify-between p-3 rounded-xl border border-dashed hover:border-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition text-left">
+                        <span class="font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-user mr-2"></i>Học Sinh Thường (Hủy chức vụ)</span>
+                        <span class="text-[10px] text-slate-400">Thành viên lớp</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         FOOTER CHUẨN 4 CỘT TỪ INDEX
+         ========================================== -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 md:py-8 border-t border-slate-800 mt-auto">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+            <div class="space-y-2 md:space-y-3">
+                <div class="flex items-center space-x-3">
+                    <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" class="w-8 h-8 rounded-full border">
+                    <span class="font-bold text-white text-xs md:text-sm uppercase">THPT Dầu Giây</span>
+                </div>
+                <p class="text-[11px] md:text-xs">Địa chỉ: Đường TL762, Khối 2, TT. Dầu Giây, H. Thống Nhất, T. Đồng Nai.</p>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Liên Kết Nhanh</h4>
+                <ul class="space-y-1 text-[11px] md:text-xs">
+                    <li><a href="/" class="hover:text-yellow-400">Trang chủ</a></li>
+                    <li><a href="/chitiet" class="hover:text-yellow-400">Thông tin công khai</a></li>
+                    <li><a href="/thidua" class="hover:text-yellow-400">Bảng thi đua</a></li>
+                    <li><a href="/login" class="hover:text-yellow-400">Đăng nhập hệ thống</a></li>
+                </ul>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Theo Dõi Chúng Tôi</h4>
+                <div class="flex items-center space-x-3 pt-1">
+                    <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-blue-600 text-white flex items-center justify-center transition" title="Facebook">
+                        <i class="fa-brands fa-facebook-f text-sm"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-pink-600 text-white flex items-center justify-center transition" title="Instagram">
+                        <i class="fa-brands fa-instagram text-sm"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-black text-white flex items-center justify-center transition border border-slate-700" title="TikTok">
+                        <i class="fa-brands fa-tiktok text-sm"></i>
+                    </a>
+                    <a href="https://youtube.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-600 text-white flex items-center justify-center transition" title="YouTube">
+                        <i class="fa-brands fa-youtube text-sm"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Bản Quyền</h4>
+                <p class="text-[11px] md:text-xs">© 2026 Trường THPT Dầu Giây. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         JAVASCRIPT XỬ LÝ TOÀN DIỆN
+         ========================================== -->
+    <script>
+        let allStudentsData = [];
+        let currentClassStudents = [];
+        let currentSelectedClass = '';
+        let targetStudentForRole = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initTheme();
+            renderDynamicNavMenu();
+            checkUserSession();
+            await initializeClassManagement();
+        });
+
+        // ==========================================
+        // 1. THANH MENU DYNAMIC CHUẨN 100% TỪ INDEX
+        // ==========================================
+        function renderDynamicNavMenu() {
+            const navContainer = document.getElementById('main-nav-container');
+            if (!navContainer) return;
+
+            const userRole = (localStorage.getItem('user_role') || 'khach').toLowerCase();
+
+            const tuVanMenuHtml = `
+                <div class="relative group">
+                    <a href="/tuvan" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-comments mr-1.5"></i>Tư Vấn <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/tuvan?tab=tamly" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Tâm Lý</a>
+                        <a href="/tuvan?tab=nganhnghe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Ngành Nghề</a>
+                        <a href="/tuvan?tab=tohop" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Tổ Hợp Môn Học</a>
+                    </div>
+                </div>
+            `;
+
+            const commonMenuHtml = `
+                <div class="relative group">
+                    <a href="/" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-house mr-1.5"></i>Trang Chủ <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Tổng quan</a>
+                        <a href="/chitiet" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Thông tin công khai</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/tintuc" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-newspaper mr-1.5"></i>Tin Tức <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-64 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/tintuc?type=thongbao" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Thông báo chung</a>
+                        <a href="/tintuc?type=doanthe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Công tác Đảng và Đoàn</a>
+                        <a href="/tintuc?type=sukien" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Sự kiện sắp ra mắt</a>
+                        <a href="/clb" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Câu lạc bộ</a>
+                        <a href="/forum" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Forum học sinh</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/thidua" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-trophy mr-1.5"></i>Thi Đua <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/thidua?loai=chon" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">BXH Lớp chọn</a>
+                        <a href="/thidua?loai=thuong" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">BXH Lớp thường</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/khenthuong" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-award mr-1.5"></i>Khen Thưởng <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/khenthuong?loai=vuotkho" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Học sinh vượt khó</a>
+                        <a href="/khenthuong?loai=hsg" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Học sinh giỏi</a>
+                        <a href="/khenthuong?loai=giupdo" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Giúp đỡ người khác</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/cuocthi" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-laptop-code mr-1.5"></i>Cuộc Thi <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/cuocthi?type=hsg" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Thi HSG</a>
+                        <a href="/cuocthi?type=stem" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">STEM</a>
+                        <a href="/cuocthi?type=khkt" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Khoa học kỹ thuật</a>
+                        <a href="/cuocthi?type=vannghe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Hát và múa</a>
+                    </div>
+                </div>
+            `;
+
+            let roleSpecificMenuHtml = '';
+
+            if (localStorage.getItem('user_role') && userRole !== 'khach') {
+                if (['hieutruong', 'bgh', 'admin', 'phohieutruong'].includes(userRole)) {
+                    roleSpecificMenuHtml = `
+                        <div class="relative group">
+                            <a href="/khoi" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-layer-group mr-1.5"></i>Khối Lớp <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/khoi10?khoi=10" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Khối 10</a>
+                                <a href="/khoi11?khoi=11" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Khối 11</a>
+                                <a href="/khoi12?khoi=12" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Khối 12</a>
+                                <a href="/hocsinh" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Học Sinh</a>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <a href="/giaovien" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-chalkboard-user mr-1.5"></i>Giáo Viên <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-60 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/bangiamhieu?tab=bgh" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Ban Giám Hiệu</a>
+                                <a href="/quanlygiamthi?tab=giamthi" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Quản Lý Giám Thị (Đoàn)</a>
+                                <a href="/quanlygiaovien" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Quản Lý Giáo Viên</a>
+                                <a href="/quanlysaodo?tab=saodo" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Quản Lý Sao Đỏ</a>
+                            </div>
+                        </div>
+                    `;
+                } 
+                else if (['chunhiem', 'gvcn'].includes(userRole)) {
+                    roleSpecificMenuHtml = `
+                        <div class="relative group">
+                            <a href="/lophoc" class="py-2.5 px-3 md:py-3 md:px-4 bg-hust-darkred border-b-2 border-yellow-400 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-users mr-1.5"></i>Lớp <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/hocsinh" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Danh sách học sinh</a>
+                                <a href="/lophoc" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Ban cán sự</a>
+                                <a href="/diemso" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Điểm số</a>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <a href="/baocao" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-file-invoice mr-1.5"></i>Báo Cáo <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/baocao?type=sodaubai" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Sổ đầu bài</a>
+                                <a href="/baocao?type=vipham" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Vi phạm</a>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <a href="/baitap" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-book-open mr-1.5"></i>Bài Tập <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/baitap?action=giaobai" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Giao bài</a>
+                                <a href="/baitap?action=kiemtra" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Bài kiểm tra</a>
+                                <a href="/baitap?action=quanly" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Quản lý bài tập</a>
+                            </div>
+                        </div>
+                    `;
+                } 
+                else if (['bomon', 'gvbm', 'teacher'].includes(userRole)) {
+                    roleSpecificMenuHtml = `
+                        <div class="relative group">
+                            <a href="/lophoc" class="py-2.5 px-3 md:py-3 md:px-4 bg-hust-darkred border-b-2 border-yellow-400 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-chalkboard mr-1.5"></i>Lớp <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/lophoc" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Quản lý</a>
+                                <a href="/diemso" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Điểm số</a>
+                                <a href="/baitap?action=kiemtra" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Bài kiểm tra</a>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <a href="/baitap" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-pen-to-square mr-1.5"></i>Bài Tập <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/baitap?action=giaobai" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Giao bài</a>
+                                <a href="/baitap?action=quanly" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Quản lý bài tập</a>
+                            </div>
+                        </div>
+                    `;
+                } 
+                else if (['hocsinh', 'phuhuynh', 'saodo', 'loptruong', 'loppho', 'bithulop'].includes(userRole)) {
+                    roleSpecificMenuHtml = `
+                        <div class="relative group">
+                            <a href="/lophoc" class="py-2.5 px-3 md:py-3 md:px-4 bg-hust-darkred border-b-2 border-yellow-400 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-graduation-cap mr-1.5"></i>Lớp <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/hocsinh" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Danh sách học sinh</a>
+                                <a href="/lophoc" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Ban cán sự</a>
+                                <a href="/diemso" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Điểm số</a>
+                            </div>
+                        </div>
+
+                        <div class="relative group">
+                            <a href="/baocao" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                                <i class="fa-solid fa-file-shield mr-1.5"></i>Báo Cáo <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                            </a>
+                            <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                                <a href="/baocao?type=vipham" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Vi phạm</a>
+                                <a href="/baocao?type=laodong" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Lao động</a>
+                                <a href="/baocao?type=khangcao" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Kháng cáo</a>
+                            </div>
+                        </div>
+
+                        ${tuVanMenuHtml}
+                    `;
+                }
+            }
+
+            const settingsMenuHtml = `
+                <a href="/settings" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                    <i class="fa-solid fa-gear mr-1.5"></i>Cài Đặt
+                </a>
+            `;
+
+            navContainer.innerHTML = commonMenuHtml + roleSpecificMenuHtml + settingsMenuHtml;
+        }
+
+        // ==========================================
+        // 2. KHỞI TẠO THEME & PHIÊN ĐĂNG NHẬP
+        // ==========================================
+        function initTheme() {
+            const themeBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+            
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                if(lightIcon) lightIcon.classList.remove('hidden');
+                if(darkIcon) darkIcon.classList.add('hidden');
+            }
+
+            if(themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                        if(lightIcon) lightIcon.classList.add('hidden');
+                        if(darkIcon) darkIcon.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                        if(lightIcon) lightIcon.classList.remove('hidden');
+                        if(darkIcon) darkIcon.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        function checkUserSession() {
+            const userRole = localStorage.getItem('user_role');
+            const userName = localStorage.getItem('user_name');
+            const userArea = document.getElementById('user-area');
+
+            if (userRole && userName) {
+                if(userArea) {
+                    userArea.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100">${userName}</p>
+                                <span class="text-[9px] font-extrabold uppercase bg-red-100 text-red-800 px-1.5 py-0.5 rounded">${userRole}</span>
+                            </div>
+                            <button onclick="logout()" class="bg-slate-200 dark:bg-slate-700 hover:bg-red-600 hover:text-white text-xs font-bold px-2.5 py-1.5 rounded transition" title="Đăng xuất">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            } else {
+                if(userArea) {
+                    userArea.innerHTML = `
+                        <a href="/login" class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-xs md:text-sm font-bold px-3 py-1.5 md:px-5 md:py-2.5 rounded shadow transition flex items-center">
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i>ĐĂNG NHẬP
+                        </a>
+                    `;
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('user_name');
+            localStorage.removeItem('assigned_class');
+            window.location.href = '/login';
+        }
+
+        // ==========================================
+        // 3. TẢI DỮ LIỆU LỚP & HỌC SINH TỰ ĐỘNG
+        // ==========================================
+        async function initializeClassManagement() {
+            const teacherName = localStorage.getItem('user_name') || 'Giáo Viên';
+            const userClassFromStorage = localStorage.getItem('assigned_class') || localStorage.getItem('user_class') || '';
+            const teacherBadge = document.getElementById('current-teacher-badge');
+
+            if (teacherBadge) {
+                teacherBadge.innerText = `GVCN: ${teacherName}`;
+            }
+
+            try {
+                // Tải danh sách tất cả học sinh đã thêm
+                const resHocSinh = await fetch('/api/hocsinh');
+                allStudentsData = await resHocSinh.json();
+
+                // Lấy danh sách tất cả lớp học thực tế có trong hệ thống
+                const classSet = new Set();
+                allStudentsData.forEach(s => {
+                    const c = (s.className || s.assignedClass || '').trim();
+                    if (c) classSet.add(c);
+                });
+
+                // Đồng thời lấy danh sách từ summary khối
+                try {
+                    const resSummary = await fetch('/api/khoi/summary');
+                    const summary = await resSummary.json();
+                    [10, 11, 12].forEach(k => {
+                        if (summary[`khoi${k}`] && summary[`khoi${k}`].classes) {
+                            summary[`khoi${k}`].classes.forEach(cls => classSet.add(cls.name));
+                        }
+                    });
+                } catch(e) {}
+
+                const allClasses = Array.from(classSet).sort();
+                const selectElem = document.getElementById('select-class-view');
+                selectElem.innerHTML = '';
+
+                if (allClasses.length === 0) {
+                    selectElem.innerHTML = `<option value="">Chưa có lớp nào</option>`;
+                } else {
+                    allClasses.forEach(c => {
+                        selectElem.innerHTML += `<option value="${c}">Lớp ${c}</option>`;
+                    });
+                }
+
+                // Tự động xác định lớp hiển thị:
+                // Ưu tiên 1: Lớp chủ nhiệm của giáo viên đăng nhập
+                // Ưu tiên 2: Lớp đầu tiên có trong danh sách
+                if (userClassFromStorage && allClasses.includes(userClassFromStorage)) {
+                    currentSelectedClass = userClassFromStorage;
+                } else if (allClasses.length > 0) {
+                    currentSelectedClass = allClasses[0];
+                }
+
+                selectElem.value = currentSelectedClass;
+                loadClassStudents(currentSelectedClass);
+
+            } catch (err) {
+                console.error("Lỗi khởi tạo dữ liệu lớp:", err);
+            }
+        }
+
+        function onSelectClassChange(newClass) {
+            currentSelectedClass = newClass;
+            loadClassStudents(newClass);
+        }
+
+        function loadClassStudents(className) {
+            document.getElementById('display-class-name').innerText = className || 'Chưa chọn';
+
+            if (!className) {
+                currentClassStudents = [];
+                renderClassCommitteeDashboard([]);
+                renderClassStudentsTable([]);
+                return;
+            }
+
+            // Lọc ra các học sinh thuộc đúng lớp này
+            currentClassStudents = allStudentsData.filter(s => {
+                const c = (s.className || s.assignedClass || '').trim();
+                return c.toLowerCase() === className.toLowerCase();
+            });
+
+            const countBadge = document.getElementById('class-student-count-badge');
+            if (countBadge) {
+                countBadge.innerText = `Sĩ số: ${currentClassStudents.length} học sinh`;
+            }
+
+            renderClassCommitteeDashboard(currentClassStudents);
+            renderClassStudentsTable(currentClassStudents);
+        }
+
+        // ==========================================
+        // 4. HIỂN THỊ DASHBOARD BAN CÁN SỰ & ĐOÀN THỂ
+        // ==========================================
+        function renderClassCommitteeDashboard(students) {
+            // Lọc các vai trò
+            const lopTruong = students.filter(s => s.classRole === 'Lớp Trưởng' || s.roleType === 'loptruong');
+            const lopPho = students.filter(s => s.classRole === 'Lớp Phó' || s.roleType === 'loppho');
+            const biThu = students.filter(s => s.classRole === 'Bí Thư' || s.roleType === 'bithulop');
+            const phoBiThu = students.filter(s => s.classRole === 'Phó Bí Thư' || s.roleType === 'phobithu');
+            const saoDo = students.filter(s => s.classRole === 'Sao Đỏ' || s.roleType === 'saodo');
+
+            // Cập nhật số lượng
+            document.getElementById('count-loptruong').innerText = `${lopTruong.length}/1`;
+            document.getElementById('count-loppho').innerText = `${lopPho.length}/2`;
+            document.getElementById('count-bithu').innerText = `${biThu.length}/1`;
+            document.getElementById('count-phobithu').innerText = `${phoBiThu.length}/2`;
+            document.getElementById('count-saodo').innerText = `${saoDo.length}/2`;
+
+            // Render tên cán sự
+            renderBadgeList('list-loptruong', lopTruong, 'text-yellow-600 dark:text-yellow-400');
+            renderBadgeList('list-loppho', lopPho, 'text-blue-600 dark:text-blue-400');
+            renderBadgeList('list-bithu', biThu, 'text-red-600 dark:text-red-400');
+            renderBadgeList('list-phobithu', phoBiThu, 'text-orange-600 dark:text-orange-400');
+            renderBadgeList('list-saodo', saoDo, 'text-purple-600 dark:text-purple-400');
+        }
+
+        function renderBadgeList(elementId, list, colorClass) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            if (list.length === 0) {
+                container.innerHTML = `<span class="text-slate-400 font-normal italic text-[11px]">Chưa bổ nhiệm</span>`;
+                return;
+            }
+            container.innerHTML = list.map(s => `
+                <div class="flex items-center justify-between text-xs py-0.5">
+                    <span class="font-black ${colorClass} truncate"><i class="fa-solid fa-circle-check text-[9px] mr-1"></i>${s.name}</span>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // 5. HIỂN THỊ DANH SÁCH HỌC SINH LỚP
+        // ==========================================
+        function renderClassStudentsTable(students) {
+            const tbody = document.getElementById('class-students-tbody');
+            if (!tbody) return;
+
+            if (!students || students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="p-6 text-center text-slate-400">
+                            Không có học sinh nào trong lớp ${currentSelectedClass || ''}. Hãy thêm học sinh tại trang "Học Sinh".
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = students.map((s, idx) => {
+                const roleInfo = getRoleBadgeInfo(s.classRole || s.roleType);
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                        <td class="p-3 font-bold text-slate-500">${idx + 1}</td>
+                        <td class="p-3">
+                            <div class="flex items-center gap-2.5">
+                                <img src="${s.avatar || '/IMAGE/default-avatar.png'}" onerror="this.onerror=null; this.src='/IMAGE/logothptdg.jpg';" class="w-8 h-8 rounded-full object-cover border dark:border-slate-600">
+                                <span class="font-bold text-slate-900 dark:text-slate-100">${s.name}</span>
+                            </div>
+                        </td>
+                        <td class="p-3 text-slate-600 dark:text-slate-300">${s.dob || '—'}</td>
+                        <td class="p-3 font-mono text-[11px] text-slate-500 dark:text-slate-400">${s.email}</td>
+                        <td class="p-3">
+                            <span class="${roleInfo.badgeClass} text-[10px] font-black px-2.5 py-1 rounded-full border inline-flex items-center gap-1 shadow-sm">
+                                ${roleInfo.icon} ${roleInfo.title}
+                            </span>
+                        </td>
+                        <td class="p-3 font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                            ${s.roleType || 'hocsinh'}
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="openRoleModal(${s.id})" class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-[11px] font-black px-3 py-1.5 rounded-lg shadow transition inline-flex items-center gap-1.5 uppercase">
+                                <i class="fa-solid fa-user-gear"></i> Phân Quyền
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getRoleBadgeInfo(role) {
+            switch(role) {
+                case 'Lớp Trưởng':
+                case 'loptruong':
+                    return { title: 'Lớp Trưởng', badgeClass: 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-950/60 dark:text-yellow-300', icon: '<i class="fa-solid fa-star text-yellow-500"></i>' };
+                case 'Lớp Phó':
+                case 'loppho':
+                    return { title: 'Lớp Phó', badgeClass: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950/60 dark:text-blue-300', icon: '<i class="fa-solid fa-user-shield text-blue-500"></i>' };
+                case 'Bí Thư':
+                case 'bithulop':
+                    return { title: 'Bí Thư', badgeClass: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-950/60 dark:text-red-300', icon: '<i class="fa-solid fa-flag text-red-500"></i>' };
+                case 'Phó Bí Thư':
+                case 'phobithu':
+                    return { title: 'Phó Bí Thư', badgeClass: 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-950/60 dark:text-orange-300', icon: '<i class="fa-solid fa-bullhorn text-orange-500"></i>' };
+                case 'Sao Đỏ':
+                case 'saodo':
+                    return { title: 'Sao Đỏ', badgeClass: 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950/60 dark:text-purple-300', icon: '<i class="fa-solid fa-shield-halved text-purple-500"></i>' };
+                default:
+                    return { title: 'Học Sinh', badgeClass: 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-700 dark:text-slate-300', icon: '<i class="fa-solid fa-user text-slate-400"></i>' };
+            }
+        }
+
+        function filterClassStudents() {
+            const query = (document.getElementById('search-student-input').value || '').toLowerCase();
+            const filtered = currentClassStudents.filter(s => 
+                s.name.toLowerCase().includes(query) || 
+                s.email.toLowerCase().includes(query) ||
+                (s.classRole && s.classRole.toLowerCase().includes(query))
+            );
+            renderClassStudentsTable(filtered);
+        }
+
+        // ==========================================
+        // 6. MODAL PHÂN CÔNG & KIỂM TRA SỐ LƯỢNG CHO PHÉP
+        // ==========================================
+        function openRoleModal(studentId) {
+            targetStudentForRole = currentClassStudents.find(s => s.id === studentId);
+            if (!targetStudentForRole) return;
+
+            document.getElementById('modal-student-name').innerText = targetStudentForRole.name;
+            document.getElementById('modal-student-email').innerText = `Tài khoản: ${targetStudentForRole.email} (Lớp: ${currentSelectedClass})`;
+            document.getElementById('role-modal').classList.remove('hidden');
+        }
+
+        function closeRoleModal() {
+            document.getElementById('role-modal').classList.add('hidden');
+            targetStudentForRole = null;
+        }
+
+        async function selectNewRole(classRoleName, roleTypeCode) {
+            if (!targetStudentForRole) return;
+
+            // Kiểm tra giới hạn số lượng chức vụ theo yêu cầu:
+            // 1 Lớp trưởng, 2 Lớp phó, 1 Bí thư, 2 Phó bí thư, 2 Sao đỏ
+            const otherStudents = currentClassStudents.filter(s => s.id !== targetStudentForRole.id);
+
+            const countLopTruong = otherStudents.filter(s => s.classRole === 'Lớp Trưởng' || s.roleType === 'loptruong').length;
+            const countLopPho = otherStudents.filter(s => s.classRole === 'Lớp Phó' || s.roleType === 'loppho').length;
+            const countBiThu = otherStudents.filter(s => s.classRole === 'Bí Thư' || s.roleType === 'bithulop').length;
+            const countPhoBiThu = otherStudents.filter(s => s.classRole === 'Phó Bí Thư' || s.roleType === 'phobithu').length;
+            const countSaoDo = otherStudents.filter(s => s.classRole === 'Sao Đỏ' || s.roleType === 'saodo').length;
+
+            if (classRoleName === 'Lớp Trưởng' && countLopTruong >= 1) {
+                alert('Lớp chỉ được phép có tối đa 1 Lớp Trưởng! Hãy hủy vai trò Lớp Trưởng hiện tại trước khi bổ nhiệm học sinh này.');
+                return;
+            }
+            if (classRoleName === 'Lớp Phó' && countLopPho >= 2) {
+                alert('Lớp chỉ được phép có tối đa 2 Lớp Phó! Hãy hủy bớt 1 Lớp Phó trước khi bổ nhiệm thêm.');
+                return;
+            }
+            if (classRoleName === 'Bí Thư' && countBiThu >= 1) {
+                alert('Chi đoàn chỉ được phép có tối đa 1 Bí Thư! Vui lòng kiểm tra lại.');
+                return;
+            }
+            if (classRoleName === 'Phó Bí Thư' && countPhoBiThu >= 2) {
+                alert('Chi đoàn chỉ được phép có tối đa 2 Phó Bí Thư! Vui lòng kiểm tra lại.');
+                return;
+            }
+            if (classRoleName === 'Sao Đỏ' && countSaoDo >= 2) {
+                alert('Đội Sao Đỏ của lớp chỉ được phép có tối đa 2 bạn! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            // Gửi cập nhật lên Server
+            try {
+                const res = await fetch(`/api/hocsinh/${targetStudentForRole.id}/role`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        classRole: classRoleName,
+                        roleType: roleTypeCode
+                    })
+                });
+
+                // Cập nhật ngay trên bộ nhớ frontend
+                targetStudentForRole.classRole = classRoleName;
+                targetStudentForRole.roleType = roleTypeCode;
+
+                alert(`Đã cập nhật chức vụ [${classRoleName}] thành công cho học sinh ${targetStudentForRole.name}!`);
+                closeRoleModal();
+                renderClassCommitteeDashboard(currentClassStudents);
+                renderClassStudentsTable(currentClassStudents);
+
+            } catch (err) {
+                // Fallback nếu server chưa kịp khởi động lại
+                targetStudentForRole.classRole = classRoleName;
+                targetStudentForRole.roleType = roleTypeCode;
+                alert(`Đã cập nhật tạm thời chức vụ [${classRoleName}] cho học sinh ${targetStudentForRole.name}!`);
+                closeRoleModal();
+                renderClassCommitteeDashboard(currentClassStudents);
+                renderClassStudentsTable(currentClassStudents);
+            }
+        }
+    </script>
+</body>
+</html>

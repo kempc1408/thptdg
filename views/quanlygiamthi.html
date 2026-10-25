@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THPT Dầu Giây - Quản Lý Giám Thị & Quản Sinh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: {
+                            red: '#990000',
+                            darkred: '#750000',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        .card-custom-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
+        }
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            pointer-events: none;
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200 overflow-x-hidden">
+
+    <!-- PHẦN HEADER VÀ MENU ĐƯỢC TỰ ĐỘNG CHÈN TỪ /layout.js -->
+
+    <!-- NỘI DUNG CHÍNH CỦA TRANG QUẢN LÝ CÁN BỘ GIÁM THỊ & QUẢN SINH -->
+    <main class="container mx-auto px-3 md:px-6 py-6 flex-grow space-y-8">
+        
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl card-custom-shadow border-l-4 border-sky-600 dark:border-sky-400 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-sky-600 dark:text-sky-400"></i> Quản Lý Cán Bộ Giám Thị, Quản Sinh & Kiểm Soát Nề Nếp
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Cấp tài khoản có vai trò Giám thị, Quản sinh, Kiểm soát nề nếp (được phân quyền đăng tin, quản lý sổ thi đua, chấm điểm nề nếp).
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="giamthi-count-badge" class="bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-extrabold text-xs px-3 py-1.5 rounded-xl border border-sky-200 dark:border-sky-800">
+                    Tổng số: 0 cán bộ
+                </span>
+            </div>
+        </div>
+
+        <!-- FORM CẤP TÀI KHOẢN GIÁM THỊ / QUẢN SINH / KIỂM SOÁT -->
+        <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-6">
+            <h3 class="font-black text-base md:text-lg text-sky-700 dark:text-sky-400 uppercase border-b dark:border-slate-700 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-id-card-clip"></i> Thêm Cán Bộ Giám Thị / Quản Sinh Mới
+            </h3>
+
+            <form id="add-giamthi-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl p-4 bg-slate-50 dark:bg-slate-700/30">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-slate-600 shadow-md mb-3 bg-slate-200 dark:bg-slate-600 flex items-center justify-center relative">
+                            <img id="avatar-preview" src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" alt="Ảnh cán bộ" class="w-full h-full object-cover">
+                        </div>
+                        <label class="cursor-pointer bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg shadow transition duration-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-camera"></i> Chọn Ảnh Đại Diện
+                            <input type="file" id="giamthi-avatar" accept="image/*" class="hidden">
+                        </label>
+                        <span class="text-[10px] text-slate-400 mt-2 text-center">Hỗ trợ các định dạng PNG, JPG, JPEG</span>
+                    </div>
+
+                    <div class="space-y-4 md:col-span-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Họ và tên cán bộ <span class="text-red-500">*</span></label>
+                                <input type="text" id="giamthi-name" required placeholder="Ví dụ: Thầy Trần Văn Quản Sinh" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Giới tính <span class="text-red-500">*</span></label>
+                                <select id="giamthi-gender" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-600">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Năm sinh / Tuổi <span class="text-red-500">*</span></label>
+                                <input type="text" id="giamthi-dob" required placeholder="Ví dụ: 1990 (36 tuổi)" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Số điện thoại (SĐT Đăng nhập) <span class="text-red-500">*</span></label>
+                                <input type="tel" id="giamthi-phone" required placeholder="Ví dụ: 0912345678" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Mật khẩu cấp <span class="text-red-500">*</span></label>
+                                <input type="text" id="giamthi-password" required value="123456" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-600 font-mono">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-sky-700 dark:text-sky-400 mb-1">Phân quyền hệ thống (Role) <span class="text-red-500">*</span></label>
+                                <select id="giamthi-role" class="w-full border-2 border-sky-400 dark:border-sky-500 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-sky-600">
+                                    <option value="giamthi">Giám Thị (giamthi)</option>
+                                    <option value="quansinh">Quản Sinh (quansinh)</option>
+                                    <option value="kiemsoat">Kiểm Soát Nề Nếp (kiemsoat)</option>
+                                    <option value="doan">Cán Bộ Đoàn Trường (doan)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Nhiệm vụ chuyên trách</label>
+                                <select id="giamthi-task" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-sky-600">
+                                    <option value="Trưởng Ban Giám Thị">Trưởng Ban Giám Thị</option>
+                                    <option value="Giám thị Khối 10, 11, 12">Giám thị Phụ trách Nề nếp</option>
+                                    <option value="Quản sinh ký túc xá & bán trú">Quản sinh Nội trú / Bán trú</option>
+                                    <option value="Bí Thư / Phó Bí Thư Đoàn Trường">Bí Thư / Phó Bí Thư Đoàn Trường</option>
+                                    <option value="Chuyên trách Kiểm soát Sổ Sao Đỏ Cuối Tuần">Kiểm soát Sổ Sao Đỏ Cuối Tuần</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Môn kiêm nhiệm (nếu có)</label>
+                                <input type="text" id="giamthi-subject" value="Giám Thị - Quản Sinh" placeholder="Ví dụ: GDTC, GDCD..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-600">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Ghi chú phân công ca trực / khu vực quản lý</label>
+                    <textarea id="giamthi-bio" rows="2" placeholder="Ghi chú phân công ca trực, khu vực dãy phòng học, nề nếp kiểm soát..." class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3.5 py-2 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-sky-600"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2 border-t dark:border-slate-700">
+                    <button type="reset" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 text-xs font-bold px-5 py-2.5 rounded-lg uppercase">
+                        Làm mới
+                    </button>
+                    <button type="submit" class="bg-sky-700 hover:bg-sky-800 text-white text-xs font-black px-7 py-2.5 rounded-lg shadow uppercase transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-check"></i> Cấp Quyền & Lưu Tài Khoản
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- DANH SÁCH GIÁM THỊ & QUẢN SINH ĐÃ CẤP -->
+        <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+            <h3 class="font-black text-base md:text-lg text-slate-900 dark:text-slate-100 uppercase border-b dark:border-slate-700 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-sky-600 dark:text-sky-400"></i> Danh Sách Cán Bộ Giám Thị, Quản Sinh & Kiểm Soát
+            </h3>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b dark:border-slate-600">
+                            <th class="p-3">Họ Tên Cán Bộ</th>
+                            <th class="p-3">Vai Trò (Role)</th>
+                            <th class="p-3">Giới Tính</th>
+                            <th class="p-3">Năm Sinh</th>
+                            <th class="p-3">SĐT (Tài khoản)</th>
+                            <th class="p-3">Nhiệm Vụ Phân Công</th>
+                            <th class="p-3 text-center">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="giamthi-table-body" class="divide-y dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/layout.js"></script>
+
+    <!-- 2. JAVASCRIPT RIÊNG CỦA TRANG QUẢN LÝ GIÁM THỊ -->
+    <script>
+        let allGiamThi = [];
+        let uploadedAvatarBase64 = '/IMAGE/logothptdg.jpg';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAvatarUpload();
+            loadGiamThiList();
+        });
+
+        function setupAvatarUpload() {
+            const fileInput = document.getElementById('giamthi-avatar');
+            const previewImg = document.getElementById('avatar-preview');
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        uploadedAvatarBase64 = event.target.result;
+                        previewImg.src = uploadedAvatarBase64;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        async function loadGiamThiList() {
+            try {
+                const res = await fetch('/api/giaovien');
+                const list = await res.json();
+                
+                allGiamThi = list.filter(t => 
+                    ['giamthi', 'quansinh', 'kiemsoat', 'doan', 'doantruong'].includes((t.roleType || '').toLowerCase())
+                );
+                renderGiamThiTable(allGiamThi);
+            } catch (err) {
+                console.error("Lỗi tải danh sách cán bộ:", err);
+            }
+        }
+
+        function renderGiamThiTable(list) {
+            const tbody = document.getElementById('giamthi-table-body');
+            const badge = document.getElementById('giamthi-count-badge');
+            
+            if (badge) badge.innerText = `Tổng số: ${list.length} cán bộ`;
+            if (!tbody) return;
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="p-6 text-center text-slate-400">
+                            Chưa có dữ liệu Giám thị / Quản sinh / Kiểm soát. Hãy thêm mới bằng form ở trên!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(t => {
+                const roleBadgeMap = {
+                    'giamthi': '<span class="bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 px-2 py-0.5 rounded font-black text-[10px]">GIÁM THỊ</span>',
+                    'quansinh': '<span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded font-black text-[10px]">QUẢN SINH</span>',
+                    'kiemsoat': '<span class="bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 px-2 py-0.5 rounded font-black text-[10px]">KIỂM SOÁT</span>',
+                    'doan': '<span class="bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 px-2 py-0.5 rounded font-black text-[10px]">ĐOÀN TRƯỜNG</span>'
+                };
+                const displayRole = roleBadgeMap[t.roleType] || `<span class="bg-slate-100 px-2 py-0.5 rounded font-bold">${t.roleType}</span>`;
+
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition duration-150">
+                        <td class="p-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${t.avatar || '/IMAGE/logothptdg.jpg'}" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" class="w-10 h-10 rounded-full object-cover border dark:border-slate-600">
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-slate-100 text-xs md:text-sm">${t.name}</p>
+                                    <p class="text-[10px] text-slate-400 line-clamp-1">${t.bio || 'Cán bộ Ban Giám Thị / Quản Sinh'}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-3">${displayRole}</td>
+                        <td class="p-3 font-semibold">
+                            <span class="${t.gender === 'Nữ' ? 'text-pink-600 dark:text-pink-400' : 'text-blue-600 dark:text-blue-400'} font-bold">
+                                ${t.gender || 'Nam'}
+                            </span>
+                        </td>
+                        <td class="p-3 font-semibold text-slate-700 dark:text-slate-300">${t.dob || 'Chưa rõ'}</td>
+                        <td class="p-3 font-mono text-xs font-bold text-sky-700 dark:text-sky-400">
+                            <i class="fa-solid fa-phone text-[10px] mr-1"></i>${t.phone}
+                        </td>
+                        <td class="p-3 font-bold text-slate-800 dark:text-slate-200">
+                            <span class="bg-sky-100 text-sky-800 border-sky-300 font-black text-[10px] px-2.5 py-1 rounded-full border inline-block">
+                                ${t.assignedClass || t.subject}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteGiamThi(${t.id})" class="bg-red-100 hover:bg-red-600 text-red-700 hover:text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition" title="Xóa cán bộ">
+                                <i class="fa-solid fa-trash-can"></i> Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('add-giamthi-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('giamthi-name').value.trim();
+            const gender = document.getElementById('giamthi-gender').value;
+            const dob = document.getElementById('giamthi-dob').value.trim();
+            const phone = document.getElementById('giamthi-phone').value.trim();
+            const password = document.getElementById('giamthi-password').value.trim();
+            const roleType = document.getElementById('giamthi-role').value;
+            const task = document.getElementById('giamthi-task').value;
+            const subject = document.getElementById('giamthi-subject').value.trim() || "Giám Thị - Quản Sinh";
+            const bio = document.getElementById('giamthi-bio').value.trim();
+
+            const newStaffData = {
+                name,
+                gender,
+                dob,
+                phone,
+                password,
+                subject,
+                address: "THPT Dầu Giây",
+                roleType: roleType,
+                assignedClass: task,
+                bio,
+                avatar: uploadedAvatarBase64
+            };
+
+            try {
+                const res = await fetch('/api/giaovien', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newStaffData)
+                });
+
+                const result = await res.json();
+                if (res.ok && result.success) {
+                    alert(`Đã cấp tài khoản thành công!\nVai trò: ${roleType.toUpperCase()}\nTài khoản (SĐT): ${phone}\nMật khẩu: ${password}`);
+                    document.getElementById('add-giamthi-form').reset();
+                    document.getElementById('avatar-preview').src = '/IMAGE/logothptdg.jpg';
+                    uploadedAvatarBase64 = '/IMAGE/logothptdg.jpg';
+                    loadGiamThiList();
+                } else {
+                    alert(result.error || 'Có lỗi xảy ra khi cấp tài khoản!');
+                }
+            } catch (err) {
+                console.error("Lỗi khi thêm cán bộ:", err);
+                alert("Lỗi kết nối máy chủ!");
+            }
+        });
+
+        async function deleteGiamThi(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa tài khoản cán bộ này?")) return;
+            try {
+                const res = await fetch(`/api/giaovien/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadGiamThiList();
+                } else {
+                    alert("Không thể xóa cán bộ!");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

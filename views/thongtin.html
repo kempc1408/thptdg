@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Công Khai - THPT Dầu Giây</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: {
+                            red: '#990000',
+                            darkred: '#750000',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        .card-custom-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06);
+        }
+        html.dark .text-hust-red { color: #f87171 !important; }
+        html.dark .border-hust-red { border-color: #f87171 !important; }
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            pointer-events: none;
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200">
+
+    <!-- Top Bar -->
+    <div class="bg-slate-900 text-slate-300 text-[11px] md:text-xs py-1.5 px-3 md:px-8 flex justify-between items-center border-b border-slate-800 relative z-50">
+        <div class="flex items-center space-x-4">
+            <span class="truncate"><i class="fa-solid fa-phone text-yellow-500 mr-1.5"></i>02513762810</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-envelope text-yellow-500 mr-1.5"></i>c3.daugiay@dongnai.edu.vn</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="text-yellow-400 font-semibold uppercase tracking-wider hidden lg:inline">Cổng Thông Tin Học Tập & Nề Nếp</span>
+            <button id="theme-toggle" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[11px] font-bold flex items-center gap-1 border border-slate-700">
+                <i id="theme-toggle-dark-icon" class="fa-solid fa-moon"></i>
+                <i id="theme-toggle-light-icon" class="fa-solid fa-sun hidden"></i>
+                <span id="theme-text" class="hidden sm:inline">Giao diện</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/95 backdrop-blur dark:bg-slate-800 border-b dark:border-slate-700 shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-2 md:space-x-3">
+                <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" alt="Logo THPT Dầu Giây" class="w-10 h-10 md:w-14 md:h-14 object-cover rounded-full border-2 border-red-800 shadow">
+                <div>
+                    <h1 class="text-base sm:text-xl md:text-2xl font-black text-hust-red dark:text-red-400 tracking-tight uppercase leading-tight">THPT Dầu Giây</h1>
+                    <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium tracking-widest uppercase">Dau Giay High School Portal</p>
+                </div>
+            </a>
+            
+            <div id="user-area" class="flex items-center gap-2"></div>
+        </div>
+
+        <nav class="bg-hust-red text-white shadow-inner relative z-50">
+            <div class="container mx-auto px-2 flex space-x-1 text-xs md:text-sm font-bold uppercase relative overflow-visible">
+                
+                <div class="relative group">
+                    <a href="/" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-house mr-1.5"></i>Trang Chủ <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Tổng quan</a>
+                        <a href="/thong-tin-cong-khai" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Thông tin công khai</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/#tintuc-section" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-newspaper mr-1.5"></i>Tin Tức <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-64 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/tintuc/thongbao" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Thông báo chung</a>
+                        <a href="/tintuc/doanthe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Công tác Đảng và Đoàn</a>
+                        <a href="/tintuc/sukien" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Sự kiện sắp ra mắt</a>
+                        <a href="/clb" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Câu lạc bộ</a>
+                        <a href="/forum" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Forum học sinh</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/thidua" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-trophy mr-1.5"></i>Thi Đua <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/thidua/chong" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">BXH Lớp chọn</a>
+                        <a href="/thidua/thuong" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">BXH Lớp thường</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/khenthuong" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-award mr-1.5"></i>Khen Thưởng <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/khenthuong/vuotkho" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Học sinh vượt khó</a>
+                        <a href="/khenthuong/hsg" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Học sinh giỏi</a>
+                        <a href="/khenthuong/giupdo" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Giúp đỡ người khác</a>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <a href="/cuocthi" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-laptop-code mr-1.5"></i>Cuộc Thi <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/cuocthi/hsg" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Thi HSG</a>
+                        <a href="/cuocthi/stem" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">STEM</a>
+                        <a href="/cuocthi/khkt" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Khoa học kỹ thuật</a>
+                        <a href="/cuocthi/vannghe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Hát và múa</a>
+                    </div>
+                </div>
+
+                <a href="/settings" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                    <i class="fa-solid fa-gear mr-1.5"></i>Cài Đặt
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow space-y-12 max-w-6xl">
+        <div class="text-center space-y-2 py-4">
+            <h2 class="text-2xl md:text-4xl font-black text-hust-red dark:text-yellow-400 uppercase tracking-tight">Thông Tin Công Khai & Giới Thiệu</h2>
+            <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-medium">
+                Cổng thông tin công khai về cơ cấu, định hướng chiến lược và các chỉ số hoạt động giáo dục của trường THPT Dầu Giây.
+            </p>
+        </div>
+
+        <!-- Khối 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl card-custom-shadow border dark:border-slate-700">
+            <div class="rounded-2xl overflow-hidden shadow-lg h-72 md:h-80">
+                <img src="/IMAGE/nentruongto.jpg" onerror="this.onerror=null; this.src='/image/nentruongto.jpg';" alt="Trường THPT Dầu Giây" class="w-full h-full object-cover">
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase">Về Trường THPT Dầu Giây</h3>
+                <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    Được thành lập từ nền tảng giáo dục chuẩn mực, nhà trường mang trong mình sứ mệnh cao cả: bồi dưỡng các thế hệ học sinh vững bước tương lai, vươn tầm tri thức. Qua các thập kỷ, chúng tôi không ngừng mở rộng cơ sở vật chất, phát triển chương trình học và cam kết đồng hành cùng sự thành công của học sinh.
+                </p>
+                <p class="text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    Hôm nay, chúng tôi tự hào mang đến môi trường học tập tiên tiến với quy mô rộng mở, chào đón các em học sinh từ khắp mọi miền đến xây dựng tương lai tại đây.
+                </p>
+            </div>
+        </div>
+
+        <!-- Khối 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl card-custom-shadow border dark:border-slate-700">
+            <div class="space-y-4 order-2 md:order-1">
+                <h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase">Nơi Định Hình Tương Lai</h3>
+                <div class="space-y-3 text-xs md:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                    <p><strong class="text-hust-red dark:text-yellow-400 font-black text-base block">1,500+ tổng số học sinh</strong></p>
+                    <p><strong class="text-hust-red dark:text-yellow-400 font-black text-base block">15:1 tỷ lệ học sinh trên giáo viên</strong></p>
+                    <p><strong class="text-hust-red dark:text-yellow-400 font-black text-base block">98% tốt nghiệp có việc làm hoặc tiếp tục học tập</strong></p>
+                    <p><strong class="text-hust-red dark:text-yellow-400 font-black text-base block">Hơn 2 tỷ đồng học bổng & hỗ trợ tài chính mỗi năm</strong></p>
+                    <p><strong class="text-hust-red dark:text-yellow-400 font-black text-base block">Hơn 10 câu lạc bộ và tổ chức học sinh</strong></p>
+                </div>
+            </div>
+            <div class="rounded-2xl overflow-hidden shadow-lg h-72 md:h-80 order-1 md:order-2">
+                <img src="/IMAGE/life2.jpg" onerror="this.onerror=null; this.src='/image/life2.jpg';" alt="Học sinh THPT Dầu Giây" class="w-full h-full object-cover">
+            </div>
+        </div>
+
+        <!-- Khối 3 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl card-custom-shadow border dark:border-slate-700">
+            <div class="rounded-2xl overflow-hidden shadow-lg h-72 md:h-80 bg-slate-900 flex items-center justify-center">
+                <img src="/IMAGE/nentruongto3.jpg" onerror="this.onerror=null; this.src='/image/nentruongto3.jpg';" alt="Lãnh đạo nhà trường" class="w-full h-full object-cover opacity-90">
+            </div>
+            <div class="space-y-4">
+                <blockquote class="text-xs md:text-sm text-slate-700 dark:text-slate-200 leading-relaxed italic font-medium border-l-4 border-hust-red dark:border-yellow-400 pl-4">
+                    "Trong hơn một thập kỷ qua, trường THPT Dầu Giây luôn là ngọn hải đăng của niềm tin, hy vọng và sự lạc quan cho hàng ngàn học sinh đang tìm kiếm cơ hội hoàn thiện bản thân trên bước đường đời."
+                </blockquote>
+                <div class="pt-2">
+                    <p class="font-black text-slate-900 dark:text-slate-100 text-sm md:text-base">— Ban Giám Hiệu</p>
+                    <p class="text-xs text-hust-red dark:text-yellow-400 font-bold">Trường THPT Dầu Giây</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 md:py-8 border-t border-slate-800 mt-auto">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+            <div class="space-y-2 md:space-y-3">
+                <div class="flex items-center space-x-3">
+                    <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" class="w-8 h-8 rounded-full border">
+                    <span class="font-bold text-white text-xs md:text-sm uppercase">THPT Dầu Giây</span>
+                </div>
+                <p class="text-[11px] md:text-xs">Địa chỉ: Đường TL762, Khối 2, TT. Dầu Giây, H. Thống Nhất, T. Đồng Nai.</p>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Liên Kết Nhanh</h4>
+                <ul class="space-y-1 text-[11px] md:text-xs">
+                    <li><a href="/" class="hover:text-yellow-400">Trang chủ</a></li>
+                    <li><a href="/thong-tin-cong-khai" class="hover:text-yellow-400">Thông tin công khai</a></li>
+                    <li><a href="/thidua" class="hover:text-yellow-400">Bảng thi đua</a></li>
+                    <li><a href="/login" class="hover:text-yellow-400">Đăng nhập hệ thống</a></li>
+                </ul>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Theo Dõi Chúng Tôi</h4>
+                <div class="flex items-center space-x-3 pt-1">
+                    <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-blue-600 text-white flex items-center justify-center transition" title="Facebook">
+                        <i class="fa-brands fa-facebook-f text-sm"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-pink-600 text-white flex items-center justify-center transition" title="Instagram">
+                        <i class="fa-brands fa-instagram text-sm"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-black text-white flex items-center justify-center transition border border-slate-700" title="TikTok">
+                        <i class="fa-brands fa-tiktok text-sm"></i>
+                    </a>
+                    <a href="https://youtube.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-600 text-white flex items-center justify-center transition" title="YouTube">
+                        <i class="fa-brands fa-youtube text-sm"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Bản Quyền</h4>
+                <p class="text-[11px] md:text-xs">© 2026 Trường THPT Dầu Giây. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            checkUserSession();
+        });
+
+        function initTheme() {
+            const themeBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+            
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                if(lightIcon) lightIcon.classList.remove('hidden');
+                if(darkIcon) darkIcon.classList.add('hidden');
+            }
+
+            if(themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                        if(lightIcon) lightIcon.classList.add('hidden');
+                        if(darkIcon) darkIcon.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                        if(lightIcon) lightIcon.classList.remove('hidden');
+                        if(darkIcon) darkIcon.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        function checkUserSession() {
+            const userRole = localStorage.getItem('user_role');
+            const userName = localStorage.getItem('user_name');
+            const userArea = document.getElementById('user-area');
+
+            if (userRole && userName) {
+                if(userArea) {
+                    userArea.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100">${userName}</p>
+                                <span class="text-[9px] font-extrabold uppercase bg-red-100 text-red-800 px-1.5 py-0.5 rounded">${userRole}</span>
+                            </div>
+                            <button onclick="logout()" class="bg-slate-200 dark:bg-slate-700 hover:bg-red-600 hover:text-white text-xs font-bold px-2.5 py-1.5 rounded transition" title="Đăng xuất">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            } else {
+                if(userArea) {
+                    userArea.innerHTML = `
+                        <a href="/login" class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-xs md:text-sm font-bold px-3 py-1.5 md:px-5 md:py-2.5 rounded shadow transition flex items-center">
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i>ĐĂNG NHẬP
+                        </a>
+                    `;
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('user_name');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

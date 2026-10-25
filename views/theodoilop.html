@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THPT Dầu Giây - Theo Dõi Nề Nếp Lớp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { hust: { red: '#990000', darkred: '#750000', gold: '#D4AF37' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col min-h-screen">
+
+    <div class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 flex justify-between items-center border-b border-slate-800">
+        <div class="flex items-center space-x-4">
+            <span><i class="fa-solid fa-phone text-yellow-500 mr-1.5"></i>02513762810</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-envelope text-yellow-500 mr-1.5"></i>c3.daugiay@dongnai.edu.vn</span>
+        </div>
+        <button id="theme-toggle" class="bg-slate-800 text-yellow-400 px-3 py-1 rounded-full text-xs font-bold border border-slate-700">
+            <i class="fa-solid fa-moon mr-1"></i>Giao diện
+        </button>
+    </div>
+
+    <header class="bg-white dark:bg-slate-800 border-b dark:border-slate-700 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-3">
+                <img src="/IMAGE/logothptdg.jpg" onerror="this.src='/image/logothptdg.jpg'" class="w-12 h-12 rounded-full border-2 border-red-800">
+                <div>
+                    <h1 class="text-xl font-black text-hust-red dark:text-red-400 uppercase">THPT Dầu Giây</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 uppercase">Dau Giay High School Portal</p>
+                </div>
+            </a>
+            <div id="user-area"></div>
+        </div>
+
+        <nav class="bg-hust-red text-white">
+            <div class="container mx-auto px-2 flex space-x-1 text-xs md:text-sm font-bold uppercase">
+                <a href="/" class="py-3 px-4 hover:bg-yellow-400 hover:text-slate-900 transition"><i class="fa-solid fa-house mr-1.5"></i>Trang Chủ</a>
+                <a href="/lophoc" class="py-3 px-4 hover:bg-yellow-400 hover:text-slate-900 transition"><i class="fa-solid fa-users mr-1.5"></i>Lớp Học</a>
+                <a href="/theodoilop" class="py-3 px-4 bg-hust-darkred border-b-2 border-yellow-400 text-yellow-300"><i class="fa-solid fa-chart-line mr-1.5"></i>Theo Dõi Lớp</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 flex-grow space-y-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow border dark:border-slate-700">
+            <h2 class="text-lg font-black text-hust-red dark:text-yellow-400 uppercase mb-4 border-b pb-2">
+                <i class="fa-solid fa-clipboard-check mr-2"></i>Báo Cáo Nề Nếp & Theo Dõi Lớp Hôm Nay
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-blue-50 dark:bg-slate-700 p-4 rounded-xl border border-blue-200 dark:border-slate-600 text-center">
+                    <p class="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase">Sĩ Số Hiện Diện</p>
+                    <p class="text-2xl font-black text-blue-600 dark:text-blue-400">40 / 40</p>
+                </div>
+                <div class="bg-green-50 dark:bg-slate-700 p-4 rounded-xl border border-green-200 dark:border-slate-600 text-center">
+                    <p class="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase">Điểm Thi Đua Tuần</p>
+                    <p class="text-2xl font-black text-green-600 dark:text-green-400">100 ĐIỂM</p>
+                </div>
+                <div class="bg-red-50 dark:bg-slate-700 p-4 rounded-xl border border-red-200 dark:border-slate-600 text-center">
+                    <p class="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase">Số Lượt Vi Phạm</p>
+                    <p class="text-2xl font-black text-red-600 dark:text-red-400">0 LẦN</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border dark:border-slate-600">
+                <h3 class="font-bold text-sm uppercase mb-3">Ghi Chú Nề Nếp Hàng Ngày</h3>
+                <textarea rows="3" placeholder="Nhập tình hình học tập / nề nếp lớp hôm nay..." class="w-full border dark:border-slate-600 dark:bg-slate-700 p-2.5 text-xs rounded-lg mb-3"></textarea>
+                <button class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-bold text-xs px-5 py-2 rounded-lg transition">
+                    Lưu Báo Cáo
+                </button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

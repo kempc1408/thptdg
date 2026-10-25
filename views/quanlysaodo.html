@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THPT Dầu Giây - Quản Lý & Phân Công Sao Đỏ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: { red: '#990000', darkred: '#750000', gold: '#D4AF37' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        .card-custom-shadow { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 10px 10px -5px rgba(0, 0, 0, 0.06); }
+        .dropdown-menu { opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; pointer-events: none; }
+        .group:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200 overflow-x-hidden">
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="container mx-auto px-3 md:px-6 py-6 flex-grow space-y-6">
+        
+        <!-- HEADER TRANG -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl card-custom-shadow border-l-4 border-hust-red dark:border-yellow-400 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-purple-600 dark:text-yellow-400"></i> Quản Lý & Phân Công Đội Sao Đỏ Chấm Chéo
+                </h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    BGH & Giám Thị phân công 2 Cờ đỏ chấm chéo (không chấm lớp bản thân). Giám sát ký sổ và khóa sổ khi hết giờ.
+                </p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <span id="saodo-total-badge" class="bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 font-extrabold text-xs px-3.5 py-1.5 rounded-xl border border-purple-200">
+                    Đang nạp dữ liệu...
+                </span>
+                <span id="unassigned-badge" class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-black text-xs px-3 py-1.5 rounded-xl border border-emerald-300">
+                    Lớp chưa gán: 0
+                </span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            
+            <!-- FORM PHÂN CÔNG CHẤM LỚP MỚI -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+                <div class="flex items-center justify-between border-b dark:border-slate-700 pb-2.5">
+                    <h3 class="font-black text-base text-hust-red dark:text-yellow-400 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-handshake"></i> Trao Quyền Chấm Lớp
+                    </h3>
+                </div>
+
+                <form id="assign-form" class="space-y-3.5" onsubmit="handleAssignSubmit(event)">
+                    
+                    <!-- NĂM HỌC & THÊM NĂM MỚI -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">Năm Học</label>
+                            <button type="button" onclick="addNewYearPrompt()" class="text-[11px] font-bold text-sky-600 hover:underline">
+                                <i class="fa-solid fa-plus-circle"></i> Thêm Năm
+                            </button>
+                        </div>
+                        <select id="assign-year" onchange="onFilterChange()" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-red-800">
+                            <option value="2026-2027">Năm học 2026 - 2027</option>
+                            <option value="2027-2028">Năm học 2027 - 2028</option>
+                        </select>
+                    </div>
+
+                    <!-- TUẦN HỌC & THÊM TUẦN MỚI -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300">Tuần Học</label>
+                            <button type="button" onclick="addNewWeekPrompt()" class="text-[11px] font-bold text-purple-600 hover:underline">
+                                <i class="fa-solid fa-plus-circle"></i> Thêm Tuần
+                            </button>
+                        </div>
+                        <select id="assign-week" onchange="onFilterChange()" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-red-800">
+                            <option value="Tuần 1">Tuần 1</option>
+                            <option value="Tuần 2">Tuần 2</option>
+                            <option value="Tuần 3">Tuần 3</option>
+                            <option value="Tuần 4">Tuần 4</option>
+                            <option value="Tuần 5">Tuần 5</option>
+                        </select>
+                    </div>
+
+                    <!-- LỚP ĐƯỢC CHẤM (CHỈ HIỆN LỚP CHƯA ĐƯỢC GÁN TRONG TUẦN) -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Lớp Được Chấm (Mục tiêu) <span class="text-red-500">*</span></label>
+                        <select id="target-class-select" required onchange="updateAvailableSaoDos()" class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-bold text-hust-red dark:text-yellow-400 focus:ring-2 focus:ring-red-800">
+                            <!-- Render danh sách lớp chưa gán theo thứ tự Khối 10 -> 11 -> 12 -->
+                        </select>
+                        <p class="text-[10px] text-slate-400 mt-1">* Lớp đã có người chấm trong tuần sẽ tự ẩn để chống nhầm.</p>
+                    </div>
+
+                    <!-- CỜ ĐỎ 1 (KHÔNG THUỘC LỚP MỤC TIÊU & CHƯA ĐƯỢC GÁN TRONG TUẦN) -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Cờ Đỏ 1 Phụ Trách <span class="text-red-500">*</span></label>
+                        <select id="saodo1-select" required class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-red-800">
+                            <!-- Render Cờ Đỏ hợp lệ -->
+                        </select>
+                    </div>
+
+                    <!-- CỜ ĐỎ 2 (KHÔNG THUỘC LỚP MỤC TIÊU & KHÁC CỜ ĐỎ 1) -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Cờ Đỏ 2 Phụ Trách <span class="text-red-500">*</span></label>
+                        <select id="saodo2-select" required class="w-full border dark:border-slate-600 dark:bg-slate-700 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-red-800">
+                            <!-- Render Cờ Đỏ hợp lệ -->
+                        </select>
+                    </div>
+
+                    <div class="bg-amber-50 dark:bg-slate-700/50 p-2.5 rounded-lg border border-amber-200 dark:border-slate-600 text-[11px] text-amber-800 dark:text-amber-300">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                        Quy tắc: <strong>1 Cờ Đỏ chỉ chấm 1 lớp/tuần</strong> và <strong>không bao giờ được chấm lớp mình</strong>.
+                    </div>
+
+                    <button type="submit" id="btn-submit-assign" class="w-full bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-black py-2.5 rounded-xl text-xs uppercase shadow transition duration-200 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Lưu & Kích Hoạt Phân Công
+                    </button>
+                </form>
+            </div>
+
+            <!-- BẢNG THEO DÕI DANH SÁCH ĐÃ PHÂN CÔNG -->
+            <div class="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+                <div class="flex justify-between items-center border-b dark:border-slate-700 pb-2.5 flex-wrap gap-2">
+                    <h3 class="font-black text-base text-slate-900 dark:text-slate-100 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-hust-red dark:text-yellow-400"></i> Bảng Phân Công Trực Chấm Tuần
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-lg" id="assignment-count">0 Lớp đã gán</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b dark:border-slate-600">
+                                <th class="p-3">Năm - Tuần</th>
+                                <th class="p-3">Lớp Được Chấm</th>
+                                <th class="p-3">Cờ Đỏ 1 (Lớp)</th>
+                                <th class="p-3">Cờ Đỏ 2 (Lớp)</th>
+                                <th class="p-3 text-center">Trạng Thái Sổ</th>
+                                <th class="p-3 text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assignment-table-body" class="divide-y dark:divide-slate-700">
+                            <!-- Render JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BẢNG THEO DÕI ĐIỂM THI ĐUA, XÁC NHẬN KÝ TÊN VÀ KHÓA SỔ -->
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b dark:border-slate-700 pb-3">
+                <div>
+                    <h3 class="font-black text-base md:text-lg text-slate-900 dark:text-slate-100 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column text-yellow-500"></i> Bảng Giám Sát Ký Sổ & Điểm Thi Đua Tuần (150 Điểm)
+                    </h3>
+                    <p class="text-[11px] text-slate-500">Theo dõi xác nhận chữ ký của Lớp trưởng và chức năng Khóa sổ của Giám Thị khi hết giờ.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="loadAllScores()" class="bg-slate-200 dark:bg-slate-700 hover:bg-yellow-400 hover:text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                        <i class="fa-solid fa-rotate-right mr-1"></i>Làm mới
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-200 uppercase text-[11px] font-black border-b dark:border-slate-600">
+                            <th class="p-3">Lớp Học</th>
+                            <th class="p-3">Cờ Đỏ Phụ Trách</th>
+                            <th class="p-3">Điểm Ban Đầu</th>
+                            <th class="p-3">Điểm Trừ / Cộng</th>
+                            <th class="p-3">Điểm Còn Lại</th>
+                            <th class="p-3 text-center">Chữ Ký Lớp Trưởng</th>
+                            <th class="p-3 text-center">Khóa Sổ Giám Thị</th>
+                            <th class="p-3 text-center">Xem Chi Tiết Sổ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scores-overview-body" class="divide-y dark:divide-slate-700">
+                        <!-- Render JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- NHÚNG FILE LAYOUT CHUNG -->
+    <script src="/layout.js"></script>
+
+    <!-- JAVASCRIPT XỬ LÝ QUẢN LÝ SAO ĐỎ -->
+    <script>
+        let availableSaoDos = [];
+        let allClassesList = [];
+        let assignmentsList = [];
+        let scoresList = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadInitialData();
+            await loadAssignments();
+            await loadAllScores();
+        });
+
+        // 1. TẢI DỮ LIỆU TỪ HỌC SINH VÀ LỚP HỌC (FILE HOCSINH & KHOI)
+        async function loadInitialData() {
+            try {
+                // Tải danh sách học sinh
+                const resHocSinh = await fetch('/api/hocsinh');
+                const students = await resHocSinh.json();
+
+                // Lọc những học sinh có chức vụ Sao Đỏ
+                availableSaoDos = students.filter(s => 
+                    s.classRole === 'Sao Đỏ' || 
+                    s.roleType === 'saodo' ||
+                    (s.role && s.role.toLowerCase().includes('saodo'))
+                );
+
+                document.getElementById('saodo-total-badge').innerText = `Tổng số: ${availableSaoDos.length} Sao Đỏ`;
+
+                // Tải danh sách lớp chuẩn
+                let classSet = new Set();
+                students.forEach(s => {
+                    const c = (s.className || s.assignedClass || '').trim();
+                    if (c) classSet.add(c);
+                });
+
+                // Thử tải thêm từ API khối để đầy đủ
+                try {
+                    const resKhoi = await fetch('/api/khoi/summary');
+                    const khoiData = await resKhoi.json();
+                    ['khoi10', 'khoi11', 'khoi12'].forEach(k => {
+                        if (khoiData[k] && khoiData[k].classes) {
+                            khoiData[k].classes.forEach(cls => classSet.add(cls.name));
+                        }
+                    });
+                } catch(err) {
+                    console.log("Không tải thêm được từ khoi/summary");
+                }
+
+                // SẮP XẾP LỚP HỌC THEO THỨ TỰ LOGIC CHUẨN: KHỐI 10 -> 11 -> 12
+                allClassesList = Array.from(classSet).sort((a, b) => {
+                    const gradeA = parseInt(a) || 0;
+                    const gradeB = parseInt(b) || 0;
+                    if (gradeA !== gradeB) return gradeA - gradeB;
+                    return a.localeCompare(b);
+                });
+
+            } catch (err) {
+                console.error("Lỗi khi tải dữ liệu ban đầu:", err);
+            }
+        }
+
+        // 2. TẢI DANH SÁCH PHÂN CÔNG
+        async function loadAssignments() {
+            try {
+                const res = await fetch('/api/saodo/assignments');
+                assignmentsList = await res.json();
+            } catch (e) {
+                assignmentsList = JSON.parse(localStorage.getItem('saodo_assignments') || '[]');
+            }
+            renderAssignmentsTable();
+            refreshTargetClassOptions();
+        }
+
+        // 3. CẬP NHẬT LỰA CHỌN LỚP CHƯA ĐƯỢC PHÂN CÔNG TRONG TUẦN HIỆN TẠI
+        function refreshTargetClassOptions() {
+            const currentWeek = document.getElementById('assign-week').value;
+            const currentYear = document.getElementById('assign-year').value;
+
+            // Tìm các lớp đã được gán cờ đỏ trong tuần và năm này
+            const assignedClassesInWeek = assignmentsList
+                .filter(a => a.week === currentWeek && (a.schoolYear === currentYear || !a.schoolYear))
+                .map(a => a.targetClass.toUpperCase());
+
+            // Lọc ra các lớp CHƯA ĐƯỢC GÁN
+            const unassignedClasses = allClassesList.filter(c => !assignedClassesInWeek.includes(c.toUpperCase()));
+
+            const targetSelect = document.getElementById('target-class-select');
+            const submitBtn = document.getElementById('btn-submit-assign');
+
+            document.getElementById('unassigned-badge').innerText = `Lớp chưa gán tuần này: ${unassignedClasses.length}`;
+
+            if (unassignedClasses.length === 0) {
+                targetSelect.innerHTML = `<option value="">(Tất cả các lớp trong tuần đã được phân công đủ!)</option>`;
+                targetSelect.disabled = true;
+                if (submitBtn) submitBtn.disabled = true;
+            } else {
+                targetSelect.disabled = false;
+                if (submitBtn) submitBtn.disabled = false;
+                targetSelect.innerHTML = unassignedClasses.map(c => `
+                    <option value="${c}">Lớp ${c}</option>
+                `).join('');
+            }
+
+            updateAvailableSaoDos();
+        }
+
+        // 4. LỌC SAO ĐỎ HỢP LỆ: KHÔNG CHẤM LỚP MÌNH & CHƯA ĐƯỢC CHẤM LỚP NÀO TRONG TUẦN
+        function updateAvailableSaoDos() {
+            const currentWeek = document.getElementById('assign-week').value;
+            const currentYear = document.getElementById('assign-year').value;
+            const targetClass = (document.getElementById('target-class-select').value || '').trim().toUpperCase();
+
+            // Lấy danh sách tên những Cờ Đỏ ĐÃ ĐƯỢC GÁN chấm trong tuần này
+            const assignedSaoDoNamesInWeek = new Set();
+            assignmentsList
+                .filter(a => a.week === currentWeek && (a.schoolYear === currentYear || !a.schoolYear))
+                .forEach(a => {
+                    if (a.saodo1) assignedSaoDoNamesInWeek.add(extractStudentName(a.saodo1));
+                    if (a.saodo2) assignedSaoDoNamesInWeek.add(extractStudentName(a.saodo2));
+                });
+
+            // Lọc Sao Đỏ:
+            // - Không thuộc lớp đang được chọn để chấm (targetClass)
+            // - Chưa được giao chấm lớp nào khác trong tuần
+            const validSaoDos = availableSaoDos.filter(s => {
+                const studentClass = (s.className || s.assignedClass || '').trim().toUpperCase();
+                const isMyOwnClass = studentClass === targetClass;
+                const isAlreadyAssigned = assignedSaoDoNamesInWeek.has(s.name.trim());
+                return !isMyOwnClass && !isAlreadyAssigned;
+            });
+
+            const s1Select = document.getElementById('saodo1-select');
+            const s2Select = document.getElementById('saodo2-select');
+
+            if (validSaoDos.length === 0) {
+                s1Select.innerHTML = `<option value="">Không còn Cờ Đỏ khả dụng cho lớp này</option>`;
+                s2Select.innerHTML = `<option value="">Không còn Cờ Đỏ khả dụng cho lớp này</option>`;
+            } else {
+                const buildOptions = (skipIndex = -1) => validSaoDos.map((s, idx) => `
+                    <option value="${s.name} (${s.className || s.assignedClass})" ${idx === skipIndex ? 'selected' : ''}>
+                        ${s.name} - Lớp ${s.className || s.assignedClass}
+                    </option>
+                `).join('');
+
+                s1Select.innerHTML = buildOptions(0);
+                s2Select.innerHTML = buildOptions(validSaoDos.length > 1 ? 1 : 0);
+            }
+        }
+
+        function extractStudentName(str) {
+            if (!str) return '';
+            const match = str.match(/^(.*?)\s*\(/);
+            return match ? match[1].trim() : str.trim();
+        }
+
+        function onFilterChange() {
+            refreshTargetClassOptions();
+            renderAssignmentsTable();
+        }
+
+        // 5. THÊM TUẦN MỚI / NĂM HỌC MỚI LINH HOẠT
+        function addNewWeekPrompt() {
+            const currentWeekCount = document.getElementById('assign-week').options.length;
+            const nextWeekName = `Tuần ${currentWeekCount + 1}`;
+            const weekInput = prompt("Nhập tên tuần học mới:", nextWeekName);
+            if (weekInput && weekInput.trim()) {
+                const opt = new Option(weekInput.trim(), weekInput.trim(), true, true);
+                document.getElementById('assign-week').add(opt);
+                onFilterChange();
+            }
+        }
+
+        function addNewYearPrompt() {
+            const yearInput = prompt("Nhập năm học mới (Ví dụ: 2028-2029):");
+            if (yearInput && yearInput.trim()) {
+                const opt = new Option(`Năm học ${yearInput.trim()}`, yearInput.trim(), true, true);
+                document.getElementById('assign-year').add(opt);
+                onFilterChange();
+            }
+        }
+
+        // 6. XỬ LÝ SUBMIT LƯU PHÂN CÔNG
+        async function handleAssignSubmit(e) {
+            e.preventDefault();
+            const schoolYear = document.getElementById('assign-year').value;
+            const week = document.getElementById('assign-week').value;
+            const targetClass = document.getElementById('target-class-select').value;
+            const saodo1 = document.getElementById('saodo1-select').value;
+            const saodo2 = document.getElementById('saodo2-select').value;
+
+            if (!targetClass) {
+                alert("Vui lòng chọn lớp được chấm!");
+                return;
+            }
+
+            if (!saodo1 || !saodo2) {
+                alert("Vui lòng chọn đủ 2 Cờ đỏ!");
+                return;
+            }
+
+            if (saodo1 === saodo2) {
+                alert("Cờ đỏ 1 và Cờ đỏ 2 không được trùng cùng một người!");
+                return;
+            }
+
+            // Kiểm tra bảo vệ cuối cùng: Không chấm lớp bản thân
+            if (saodo1.includes(`(${targetClass})`) || saodo2.includes(`(${targetClass})`)) {
+                alert(`Lỗi: Sao Đỏ của lớp ${targetClass} không được phép chấm điểm chính lớp của mình!`);
+                return;
+            }
+
+            const data = { schoolYear, week, targetClass, saodo1, saodo2 };
+            try {
+                const res = await fetch('/api/saodo/assignments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    alert(`Đã phân công Cờ đỏ chấm lớp ${targetClass} (${week}) thành công!`);
+                    await loadAssignments();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi kết nối máy chủ!");
+            }
+        }
+
+        // 7. XÓA PHÂN CÔNG
+        async function deleteAssignment(id) {
+            if (!confirm("Bạn có chắc muốn xóa phân công lớp này để chọn lại Cờ đỏ khác?")) return;
+            try {
+                const res = await fetch(`/api/saodo/assignments/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await loadAssignments();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 8. RENDER BẢNG PHÂN CÔNG
+        function renderAssignmentsTable() {
+            const tbody = document.getElementById('assignment-table-body');
+            const currentWeek = document.getElementById('assign-week').value;
+            const currentYear = document.getElementById('assign-year').value;
+
+            // Lọc theo tuần và năm đang chọn
+            const filtered = assignmentsList.filter(a => a.week === currentWeek && (a.schoolYear === currentYear || !a.schoolYear));
+
+            document.getElementById('assignment-count').innerText = `${filtered.length} lớp đã gán (${currentWeek})`;
+            if (!tbody) return;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Chưa có phân công chấm thi đua nào cho ${currentWeek}. Hãy giao quyền ở form bên trái!</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(a => `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                    <td class="p-3 font-bold text-slate-500">${a.schoolYear || '2026-2027'} - <span class="text-slate-800 dark:text-slate-200">${a.week}</span></td>
+                    <td class="p-3 font-black text-hust-red dark:text-yellow-400 text-sm">Lớp ${a.targetClass}</td>
+                    <td class="p-3 font-semibold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-user-check text-emerald-600 mr-1.5"></i>${a.saodo1}</td>
+                    <td class="p-3 font-semibold text-slate-700 dark:text-slate-200"><i class="fa-solid fa-user-check text-emerald-600 mr-1.5"></i>${a.saodo2}</td>
+                    <td class="p-3 text-center">
+                        <span class="${a.isLocked ? 'bg-red-100 text-red-700 border-red-300' : 'bg-emerald-100 text-emerald-700 border-emerald-300'} text-[10px] font-black px-2 py-0.5 rounded-full border">
+                            ${a.isLocked ? '<i class="fa-solid fa-lock mr-1"></i>Đã Khóa Sổ' : '<i class="fa-solid fa-lock-open mr-1"></i>Đang Mở'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center space-x-1.5">
+                        <button onclick="toggleLockBook('${a.targetClass}', '${a.week}', ${!a.isLocked})" class="${a.isLocked ? 'bg-amber-100 hover:bg-amber-600 text-amber-800 hover:text-white' : 'bg-red-100 hover:bg-red-600 text-red-800 hover:text-white'} px-2 py-1 rounded font-bold text-[10px] transition uppercase">
+                            ${a.isLocked ? 'Mở Khóa' : 'Khóa Sổ'}
+                        </button>
+                        <button onclick="deleteAssignment(${a.id})" class="bg-slate-100 hover:bg-red-600 text-slate-700 hover:text-white px-2 py-1 rounded font-bold text-[10px] transition" title="Xóa phân công">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 9. BẢNG THEO DÕI ĐIỂM, CHỮ KÝ LỚP TRƯỞNG VÀ KHÓA SỔ
+        async function loadAllScores() {
+            const tbody = document.getElementById('scores-overview-body');
+            try {
+                const res = await fetch('/api/saodo/scores');
+                scoresList = await res.json();
+            } catch (e) {
+                scoresList = [];
+            }
+
+            if (!scoresList || scoresList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Chưa có sổ chấm tuần nào được nộp.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = scoresList.map(s => {
+                const scoreLeft = s.totalScore !== undefined ? s.totalScore : 150;
+                const scoreDiff = scoreLeft - 150;
+
+                // Tìm xem lớp này có đang bị khóa sổ không
+                const assign = assignmentsList.find(a => a.targetClass === s.targetClass && a.week === s.week);
+                const isLocked = assign ? assign.isLocked : false;
+
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                        <td class="p-3 font-black text-sm text-slate-800 dark:text-slate-100">
+                            Lớp ${s.targetClass} 
+                            <span class="text-[10px] text-slate-400 block">${s.week}</span>
+                        </td>
+                        <td class="p-3 text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                            <div>1. ${s.saodo1 || 'Chưa rõ'}</div>
+                            <div>2. ${s.saodo2 || 'Chưa rõ'}</div>
+                        </td>
+                        <td class="p-3 font-bold">150 đ</td>
+                        <td class="p-3 font-bold ${scoreDiff < 0 ? 'text-red-600' : 'text-green-600'}">
+                            ${scoreDiff > 0 ? `+${scoreDiff}` : scoreDiff} đ
+                        </td>
+                        <td class="p-3 font-black text-base text-hust-red dark:text-yellow-400">
+                            ${scoreLeft} đ
+                        </td>
+                        <td class="p-3 text-center">
+                            <span class="${s.verifiedByLeader ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300'} text-[10px] font-black px-2.5 py-1 rounded-full border inline-block">
+                                ${s.verifiedByLeader ? `<i class="fa-solid fa-signature mr-1"></i>${s.verifiedByLeader}` : '<i class="fa-solid fa-clock mr-1"></i>Chưa ký'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="toggleLockBook('${s.targetClass}', '${s.week}', ${!isLocked})" class="${isLocked ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-slate-200 dark:bg-slate-700 hover:bg-red-600 hover:text-white text-slate-700 dark:text-slate-200'} font-extrabold text-[10px] px-2.5 py-1 rounded-lg uppercase transition">
+                                ${isLocked ? '<i class="fa-solid fa-lock mr-1"></i>Đã Khóa' : '<i class="fa-solid fa-lock-open mr-1"></i>Khóa Sổ'}
+                            </button>
+                        </td>
+                        <td class="p-3 text-center">
+                            <a href="/vipham?target=${s.targetClass}&week=${encodeURIComponent(s.week)}" class="bg-slate-800 hover:bg-yellow-400 hover:text-slate-900 text-white px-3 py-1.5 rounded-lg font-bold text-[11px] transition inline-block uppercase">
+                                Chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 10. THAO TÁC KHÓA / MỞ KHÓA SỔ DÀNH CHO GIÁM THỊ
+        async function toggleLockBook(targetClass, week, lockState) {
+            const actionText = lockState ? "KHÓA SỔ" : "MỞ KHÓA SỔ";
+            if (!confirm(`Bạn có chắc muốn ${actionText} cho lớp ${targetClass} trong ${week}?`)) return;
+
+            try {
+                const res = await fetch('/api/saodo/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetClass, week, lockState })
+                });
+
+                if (res.ok) {
+                    alert(`Đã ${actionText} thành công!`);
+                    await loadAssignments();
+                    await loadAllScores();
+                } else {
+                    alert("Không thể thực hiện khóa sổ!");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

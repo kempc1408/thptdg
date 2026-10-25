@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Bài Báo Mới - Hiệu Trưởng | THPT Dầu Giây</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hust: {
+                            red: '#990000',
+                            darkred: '#750000',
+                            gold: '#D4AF37'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .bg-hust-red { background-color: #990000; }
+        .bg-hust-darkred { background-color: #750000; }
+        .text-hust-red { color: #990000; }
+        .border-hust-red { border-color: #990000; }
+
+        .bg-pattern {
+            background-image: radial-gradient(#990000 0.5px, transparent 0.5px), radial-gradient(#990000 0.5px, #f1f5f9 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        html.dark .bg-pattern {
+            background-image: radial-gradient(#f87171 0.5px, transparent 0.5px), radial-gradient(#f87171 0.5px, #0f172a 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .card-custom-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            pointer-events: none;
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200">
+
+    <!-- 1. TOP BAR -->
+    <div class="bg-slate-900 text-slate-300 text-[11px] md:text-xs py-1.5 px-3 md:px-8 flex justify-between items-center border-b border-slate-800 relative z-50">
+        <div class="flex items-center space-x-4">
+            <span class="truncate"><i class="fa-solid fa-phone text-yellow-500 mr-1.5"></i>02513762810</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-envelope text-yellow-500 mr-1.5"></i>c3.daugiay@dongnai.edu.vn</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <span class="text-yellow-400 font-semibold uppercase tracking-wider hidden lg:inline">Cổng Thông Tin Học Tập & Nề Nếp</span>
+            <button id="theme-toggle" class="bg-slate-800 hover:bg-slate-700 text-yellow-400 px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[11px] font-bold flex items-center gap-1 border border-slate-700">
+                <i id="theme-toggle-dark-icon" class="fa-solid fa-moon"></i>
+                <i id="theme-toggle-light-icon" class="fa-solid fa-sun hidden"></i>
+                <span id="theme-text" class="hidden sm:inline">Giao diện</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. HEADER & NAVIGATION -->
+    <header class="bg-white/95 backdrop-blur dark:bg-slate-800 border-b dark:border-slate-700 shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-3 md:px-4 py-2 md:py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center space-x-2 md:space-x-3">
+                <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" alt="Logo THPT Dầu Giây" class="w-10 h-10 md:w-14 md:h-14 object-cover rounded-full border-2 border-red-800 shadow">
+                <div>
+                    <h1 class="text-base sm:text-xl md:text-2xl font-black text-hust-red dark:text-red-400 tracking-tight uppercase leading-tight">THPT Dầu Giây</h1>
+                    <p class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium tracking-widest uppercase">Dau Giay High School Portal</p>
+                </div>
+            </a>
+            
+            <div id="user-area" class="flex items-center gap-2"></div>
+        </div>
+
+        <!-- MAIN NAVBAR -->
+        <nav class="bg-hust-red text-white shadow-inner relative z-50">
+            <div class="container mx-auto px-2 flex space-x-1 text-xs md:text-sm font-bold uppercase relative overflow-visible">
+                
+                <!-- Trang chủ -->
+                <div class="relative group">
+                    <a href="/" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-house mr-1.5"></i>Trang Chủ <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Tổng quan</a>
+                        <a href="/thong-tin-cong-khai" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Thông tin công khai</a>
+                    </div>
+                </div>
+
+                <!-- Tin Tức -->
+                <div class="relative group">
+                    <a href="/tintuc/thongbao" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-newspaper mr-1.5"></i>Tin Tức <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-64 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/tintuc/thongbao" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Thông báo chung</a>
+                        <a href="/tintuc/doanthe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Công tác Đảng và Đoàn</a>
+                        <a href="/tintuc/sukien" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Sự kiện sắp ra mắt</a>
+                        <a href="/clb" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Câu lạc bộ</a>
+                        <a href="/forum" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Forum học sinh</a>
+                    </div>
+                </div>
+
+                <!-- Thi Đua -->
+                <div class="relative group">
+                    <a href="/thidua" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-trophy mr-1.5"></i>Thi Đua <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-52 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/thidua/chong" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">BXH Lớp chọn</a>
+                        <a href="/thidua/thuong" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">BXH Lớp thường</a>
+                    </div>
+                </div>
+
+                <!-- Khen Thưởng -->
+                <div class="relative group">
+                    <a href="/khenthuong" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-award mr-1.5"></i>Khen Thưởng <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/khenthuong/vuotkho" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Học sinh vượt khó</a>
+                        <a href="/khenthuong/hsg" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Học sinh giỏi</a>
+                        <a href="/khenthuong/giupdo" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Giúp đỡ người khác</a>
+                    </div>
+                </div>
+
+                <!-- Cuộc Thi -->
+                <div class="relative group">
+                    <a href="/cuocthi" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                        <i class="fa-solid fa-laptop-code mr-1.5"></i>Cuộc Thi <i class="fa-solid fa-chevron-down ml-1.5 text-[10px]"></i>
+                    </a>
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 rounded-b-lg">
+                        <a href="/cuocthi/hsg" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Thi HSG</a>
+                        <a href="/cuocthi/stem" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">STEM</a>
+                        <a href="/cuocthi/khkt" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition border-b dark:border-slate-700/50">Khoa học kỹ thuật</a>
+                        <a href="/cuocthi/vannghe" class="block px-4 py-2.5 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-hust-red dark:hover:text-yellow-400 transition">Hát và múa</a>
+                    </div>
+                </div>
+
+                <a href="/settings" class="py-2.5 px-3 md:py-3 md:px-4 hover:bg-yellow-400 hover:text-slate-900 transition flex items-center">
+                    <i class="fa-solid fa-gear mr-1.5"></i>Cài Đặt
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 3. MAIN FORM CONTENT -->
+    <main class="container mx-auto px-4 py-8 flex-grow max-w-4xl">
+        <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl card-custom-shadow border dark:border-slate-700 space-y-6">
+            <div class="border-b dark:border-slate-700 pb-4 flex justify-between items-center">
+                <h1 class="text-xl md:text-2xl font-black text-hust-red dark:text-yellow-400 uppercase flex items-center">
+                    <i class="fa-solid fa-newspaper mr-3"></i> Soạn Thảo & Đăng Bài Báo Mới
+                </h1>
+                <a href="/" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-red-800 dark:hover:text-yellow-400 transition"><i class="fa-solid fa-arrow-left mr-1"></i> Về Trang Chủ</a>
+            </div>
+
+            <form id="form-post-article" class="space-y-6">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-2">Tiêu Đề Bài Báo</label>
+                    <input type="text" id="title" placeholder="Nhập tiêu đề chính..." class="w-full p-3 border dark:border-slate-600 dark:bg-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-red-800 dark:focus:ring-yellow-400" required>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-2">Chuyên Mục Đăng Bài</label>
+                    <select id="category" class="w-full p-3 border dark:border-slate-600 dark:bg-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-red-800 dark:focus:ring-yellow-400">
+                        <option value="Thông Báo Chung">Thông Báo Chung</option>
+                        <option value="Công Tác Đảng VÀ Đoàn">Công Tác Đảng VÀ Đoàn</option>
+                        <option value="Sự Kiện Sắp Ra Mắt">Sự Kiện Sắp Ra Mắt</option>
+                        <option value="Vinh Danh Học Sinh Giỏi">Vinh Danh Học Sinh Giỏi</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-2">Đoạn Mở Đầu (Sa-pô / Tóm tắt)</label>
+                    <textarea id="lead" rows="2" placeholder="Nhập đoạn sa-pô tóm tắt bài báo..." class="w-full p-3 border dark:border-slate-600 dark:bg-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-800 dark:focus:ring-yellow-400" required></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-2">Ảnh Đại Diện (Thumbnail trên Trang Chủ)</label>
+                    <input type="text" id="main-image" placeholder="Nhập đường dẫn ảnh (Ví dụ: /IMAGE/nentruongto.jpg)" class="w-full p-3 border dark:border-slate-600 dark:bg-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-800 dark:focus:ring-yellow-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-2">Nội Dung Bài Báo Chi Tiết (Nhiều ảnh & nhiều đoạn)</label>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-2">Hỗ trợ các thẻ HTML như: <code>&lt;p&gt;Đoạn văn&lt;/p&gt;</code>, <code>&lt;h2&gt;Tiêu đề phụ&lt;/h2&gt;</code>, hoặc chèn ảnh kèm chú thích dạng: <code>&lt;figure&gt;&lt;img src="/IMAGE/nentruongto2.jpg"&gt;&lt;figcaption&gt;Chú thích ảnh&lt;/figcaption&gt;&lt;/figure&gt;</code></p>
+                    <textarea id="body-content" rows="12" class="w-full p-3 border dark:border-slate-600 dark:bg-slate-700 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-red-800 dark:focus:ring-yellow-400" placeholder="<p>Nhập đoạn văn 1 tại đây...</p>
+
+<figure>
+    <img src='/IMAGE/nentruongto2.jpg'>
+    <figcaption>Chú thích cho hình ảnh 1</figcaption>
+</figure>
+
+<h2>1. Tiêu đề mục tiếp theo</h2>
+<p>Nhập đoạn văn 2 tại đây...</p>" required></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wide shadow-md transition flex items-center justify-center">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Đăng Bài Báo Lên Trang Chủ
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- 4. FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 md:py-8 border-t border-slate-800 mt-auto">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+            <div class="space-y-2 md:space-y-3">
+                <div class="flex items-center space-x-3">
+                    <img src="/IMAGE/logothptdg.jpg" onerror="this.onerror=null; this.src='/image/logothptdg.jpg';" class="w-8 h-8 rounded-full border">
+                    <span class="font-bold text-white text-xs md:text-sm uppercase">THPT Dầu Giây</span>
+                </div>
+                <p class="text-[11px] md:text-xs">Địa chỉ: Đường TL762, Khối 2, TT. Dầu Giây, H. Thống Nhất, T. Đồng Nai.</p>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Liên Kết Nhanh</h4>
+                <ul class="space-y-1 text-[11px] md:text-xs">
+                    <li><a href="/" class="hover:text-yellow-400">Trang chủ</a></li>
+                    <li><a href="/thong-tin-cong-khai" class="hover:text-yellow-400">Thông tin công khai</a></li>
+                    <li><a href="/thidua" class="hover:text-yellow-400">Bảng thi đua</a></li>
+                    <li><a href="/login" class="hover:text-yellow-400">Đăng nhập hệ thống</a></li>
+                </ul>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Theo Dõi Chúng Tôi</h4>
+                <div class="flex items-center space-x-3 pt-1">
+                    <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-blue-600 text-white flex items-center justify-center transition" title="Facebook">
+                        <i class="fa-brands fa-facebook-f text-sm"></i>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-pink-600 text-white flex items-center justify-center transition" title="Instagram">
+                        <i class="fa-brands fa-instagram text-sm"></i>
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-black text-white flex items-center justify-center transition border border-slate-700" title="TikTok">
+                        <i class="fa-brands fa-tiktok text-sm"></i>
+                    </a>
+                    <a href="https://youtube.com" target="_blank" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-600 text-white flex items-center justify-center transition" title="YouTube">
+                        <i class="fa-brands fa-youtube text-sm"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="font-bold text-white uppercase text-xs md:text-sm">Bản Quyền</h4>
+                <p class="text-[11px] md:text-xs">© 2026 Trường THPT Dầu Giây. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            checkUserSession();
+        });
+
+        function initTheme() {
+            const themeBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+            
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                if(lightIcon) lightIcon.classList.remove('hidden');
+                if(darkIcon) darkIcon.classList.add('hidden');
+            }
+
+            if(themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                        if(lightIcon) lightIcon.classList.add('hidden');
+                        if(darkIcon) darkIcon.classList.remove('hidden');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                        if(lightIcon) lightIcon.classList.remove('hidden');
+                        if(darkIcon) darkIcon.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        function checkUserSession() {
+            const userRole = localStorage.getItem('user_role');
+            const userName = localStorage.getItem('user_name');
+            const userArea = document.getElementById('user-area');
+
+            if (userRole && userName) {
+                if(userArea) {
+                    userArea.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100">${userName}</p>
+                                <span class="text-[9px] font-extrabold uppercase bg-red-100 text-red-800 px-1.5 py-0.5 rounded">${userRole}</span>
+                            </div>
+                            <button onclick="logout()" class="bg-slate-200 dark:bg-slate-700 hover:bg-red-600 hover:text-white text-xs font-bold px-2.5 py-1.5 rounded transition" title="Đăng xuất">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            } else {
+                if(userArea) {
+                    userArea.innerHTML = `
+                        <a href="/login" class="bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white text-xs md:text-sm font-bold px-3 py-1.5 md:px-5 md:py-2.5 rounded shadow transition flex items-center">
+                            <i class="fa-solid fa-right-to-bracket mr-1.5"></i>ĐĂNG NHẬP
+                        </a>
+                    `;
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user_role');
+            localStorage.removeItem('user_name');
+            window.location.reload();
+        }
+
+        document.getElementById('form-post-article').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const newId = Date.now().toString();
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN');
+            const author = localStorage.getItem('user_name') || "ThS. Hiệu trưởng";
+
+            const newArticle = {
+                id: newId,
+                title: document.getElementById('title').value,
+                lead: document.getElementById('lead').value,
+                category: document.getElementById('category').value,
+                image: document.getElementById('main-image').value || '/IMAGE/nentruongto.jpg',
+                content: document.getElementById('body-content').value,
+                author: author,
+                date: dateStr,
+                views: "1"
+            };
+
+            try {
+                const res = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newArticle)
+                });
+
+                if(!res.ok) {
+                    let articles = JSON.parse(localStorage.getItem('posted_articles') || '[]');
+                    articles.unshift(newArticle);
+                    localStorage.setItem('posted_articles', JSON.stringify(articles));
+                }
+            } catch(err) {
+                let articles = JSON.parse(localStorage.getItem('posted_articles') || '[]');
+                articles.unshift(newArticle);
+                localStorage.setItem('posted_articles', JSON.stringify(articles));
+            }
+
+            alert('Đã đăng bài báo thành công! Đang chuyển hướng về Trang Chủ...');
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>
