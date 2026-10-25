@@ -91,7 +91,10 @@
 
 <body class="bg-slate-100 dark:bg-slate-900 bg-pattern text-slate-800 dark:text-slate-100 flex flex-col min-h-screen transition-colors duration-200 overflow-x-hidden">
 
-    <!-- PHẦN TOPBAR, HEADER, LOGO & THANH MENU SẼ ĐƯỢC TỰ ĐỘNG CHÈN QUA /layout.js -->
+    <!-- ========================================================
+         PHẦN TOPBAR, HEADER, LOGO & THANH MENU SẼ ĐƯỢC TỰ ĐỘNG
+         CHÈN TẠI ĐÂY QUA FILE /layout.js
+         ======================================================== -->
 
     <!-- HERO SECTION VỚI SLIDER HÌNH ẢNH & SLOGAN TRƯỜNG -->
     <section class="relative w-full pb-10 sm:pb-14 z-0">
@@ -322,6 +325,53 @@
         </div>
     </section>
 
+    <!-- SECTION CUỘC SỐNG TẠI THPT DẦU GIÂY (4 ẢNH XOAY NGHỆ THUẬT) -->
+    <section class="py-8 relative overflow-hidden border-b dark:border-slate-800">
+        <div class="text-center mb-3 relative z-10 px-4">
+            <h3 class="text-lg md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-wide flex items-center justify-center gap-2">
+                CUỘC SỐNG TẠI THPT DẦU GIÂY
+            </h3>
+        </div>
+
+        <div class="relative w-full py-4 md:py-6">
+            <div class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-20 sm:h-28 md:h-36 bg-hust-red dark:bg-red-950 shadow-inner z-0"></div>
+
+            <div class="relative z-10 container mx-auto px-2 max-w-5xl">
+                <div class="hidden md:flex items-center justify-center -space-x-4">
+                    <div class="relative z-10 transform -rotate-3 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life1.jpg" onerror="this.onerror=null; this.src='/image/life1.jpg';" alt="Cuộc sống 1" class="w-full h-full object-cover">
+                    </div>
+                    <div class="relative z-20 transform rotate-2 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life2.jpg" onerror="this.onerror=null; this.src='/image/life2.jpg';" alt="Cuộc sống 2" class="w-full h-full object-cover">
+                    </div>
+                    <div class="relative z-10 transform -rotate-2 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life3.jpg" onerror="this.onerror=null; this.src='/image/life3.jpg';" alt="Cuộc sống 3" class="w-full h-full object-cover">
+                    </div>
+                    <div class="relative z-20 transform rotate-3 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-60 h-80 shrink-0">
+                        <img src="/IMAGE/life4.jpg" onerror="this.onerror=null; this.src='/image/life4.jpg';" alt="Cuộc sống 4" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <div class="flex md:hidden items-center justify-center px-4">
+                    <div class="relative z-10 rounded-2xl overflow-hidden card-custom-shadow bg-white dark:bg-slate-800 w-full max-w-xs h-64">
+                        <img src="/IMAGE/life1.jpg" onerror="this.onerror=null; this.src='/image/life1.jpg';" alt="Cuộc sống THPT Dầu Giây" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center space-y-3 mt-3 px-4 relative z-10 max-w-2xl mx-auto">
+            <p class="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                Khám phá môi trường học tập sôi động, hơn 10+ hoạt động học sinh hấp dẫn, trải nghiệm tri thức và vô vàn kỷ niệm đáng nhớ tại THPT Dầu Giây.
+            </p>
+            <div>
+                <a href="/clb" class="inline-block bg-hust-red hover:bg-yellow-400 hover:text-slate-900 text-white font-black text-xs md:text-sm px-6 py-2.5 rounded-lg shadow-md transition-colors duration-200 uppercase tracking-wide">
+                    Đời Sống Học Sinh
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- MODAL SỬA LỊCH CÔNG TÁC TUẦN (CHO GIÁM THỊ / ĐOÀN TRƯỜNG / BGH) -->
     <div id="edit-schedule-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border dark:border-slate-700 animate-pop-in">
@@ -442,8 +492,8 @@
             loadSlogan();
             loadPosts();
             loadExcellencePosts();
-            loadDynamicTopThiDua();   // Tải Top thi đua tự động từ sổ 150đ
-            loadWeeklySchedule();      // Tải Lịch công tác tuần động
+            loadDynamicTopThiDua();
+            loadWeeklySchedule();
             startImageSlider();
             renderClubSliderDirectly();
         });
@@ -460,7 +510,7 @@
 
             if (isDisciplineStaff()) {
                 if (createPostCard) createPostCard.classList.remove('hidden');
-                if (scheduleControls) scheduleControls.classList.remove('hidden'); // Giám thị được sửa lịch
+                if (scheduleControls) scheduleControls.classList.remove('hidden');
             }
 
             const userRole = (localStorage.getItem('user_role') || '').toLowerCase();
@@ -469,13 +519,10 @@
             }
         }
 
-        // ============================================================
-        // 1. TẢI VÀ TÍNH TOÁN TOP THI ĐUA TUẦN HOÀN TOÀN ĐỘNG (TỪ SỔ 150Đ)
-        // ============================================================
+        // 1. TẢI VÀ TÍNH TOÁN TOP THI ĐUA ĐỘNG TỪ SỔ CHẤM
         async function loadDynamicTopThiDua() {
             const feed = document.getElementById('top-classes-feed');
             try {
-                // Tải sổ điểm thi đua thực tế từ Server
                 const res = await fetch('/api/saodo/scores');
                 const allScores = await res.json();
 
@@ -488,26 +535,21 @@
                     return;
                 }
 
-                // Nhóm và tính điểm cho từng lớp trong tuần mới nhất
                 const latestWeek = allScores[allScores.length - 1]?.week || "Tuần 1";
                 document.getElementById('top-week-label').innerText = `Xếp hạng trực tiếp: ${latestWeek}`;
 
                 const weekScores = allScores.filter(s => s.week === latestWeek);
-
-                // Sắp xếp điểm số từ cao xuống thấp
                 weekScores.sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
 
-                // Lấy Top 3 lớp cao nhất
                 const topClasses = weekScores.slice(0, 3);
-
                 const badgeColors = [
-                    { rank: "#1", color: "text-yellow-500 font-black", bg: "bg-yellow-100 text-yellow-800 border-yellow-300" },
-                    { rank: "#2", color: "text-slate-400 font-black", bg: "bg-slate-200 text-slate-800 border-slate-300" },
-                    { rank: "#3", color: "text-amber-600 font-black", bg: "bg-amber-100 text-amber-800 border-amber-300" }
+                    { rank: "#1", color: "text-yellow-500 font-black" },
+                    { rank: "#2", color: "text-slate-400 font-black" },
+                    { rank: "#3", color: "text-amber-600 font-black" }
                 ];
 
                 feed.innerHTML = topClasses.map((item, idx) => {
-                    const badge = badgeColors[idx] || { rank: `#${idx+1}`, color: "text-slate-400 font-bold", bg: "bg-slate-100 text-slate-700" };
+                    const badge = badgeColors[idx] || { rank: `#${idx+1}`, color: "text-slate-400 font-bold" };
                     return `
                         <div class="flex items-center justify-between p-2 md:p-2.5 bg-slate-50 dark:bg-slate-700/50 rounded-xl border dark:border-slate-700 hover:scale-[1.01] transition">
                             <span class="font-bold text-xs md:text-sm flex items-center">
@@ -527,9 +569,7 @@
             }
         }
 
-        // ============================================================
         // 2. TẢI VÀ QUẢN LÝ LỊCH CÔNG TÁC TUẦN ĐỘNG
-        // ============================================================
         async function loadWeeklySchedule() {
             const feed = document.getElementById('schedule-feed');
             try {
@@ -554,11 +594,8 @@
             }
         }
 
-        // Mở Modal sửa lịch cho Giám thị
         function openEditScheduleModal() {
             document.getElementById('edit-schedule-modal').classList.remove('hidden');
-            
-            // Tự động điền dữ liệu hiện tại vào form nếu có
             const dayMap = { "Thứ Hai": "sch-hai", "Thứ Ba": "sch-ba", "Thứ Tư": "sch-tu", "Thứ Năm": "sch-nam", "Thứ Sáu": "sch-sau", "Thứ Bảy": "sch-bay" };
             currentScheduleData.forEach(item => {
                 const inputId = dayMap[item.day];
@@ -599,20 +636,18 @@
                 });
 
                 if (res.ok) {
-                    alert("Đã cập nhật Lịch công tác tuần lên toàn bộ hệ thống thành công!");
+                    alert("Đã cập nhật Lịch công tác tuần thành công!");
                     closeEditScheduleModal();
                     await loadWeeklySchedule();
                 } else {
-                    alert("Lỗi khi lưu lịch công tác!");
+                    alert("Lỗi khi lưu lịch!");
                 }
             } catch (err) {
                 alert("Lỗi kết nối máy chủ!");
             }
         }
 
-        // ============================================================
-        // 3. LOGIC SLIDER & BÀI VIẾT (GIỮ NGUYÊN HOÀN TOÀN)
-        // ============================================================
+        // 3. SLIDER HÌNH NỀN
         function startImageSlider() {
             const slides = document.querySelectorAll('.hero-slide');
             if (!slides || slides.length === 0) return;
@@ -629,6 +664,7 @@
             }, 8000);
         }
 
+        // 4. SLIDER CÂU LẠC BỘ (GIỮ NGUYÊN)
         function renderClubSliderDirectly() {
             const club = clubsData[currentClubIndex];
             
@@ -691,6 +727,7 @@
             changeClubSmoothly(newIndex);
         }
 
+        // 5. SLOGAN & BÀI BÁO (GIỮ NGUYÊN)
         async function loadSlogan() {
             try {
                 const res = await fetch('/api/slogan');
@@ -721,7 +758,7 @@
                         sloganDisplay.innerText = `"${data.slogan}"`;
                     }
                 } catch (err) {
-                    alert("Không thể cập nhật slogan lên Server!");
+                    alert("Không thể cập nhật slogan!");
                 }
             }
         }
