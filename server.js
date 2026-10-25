@@ -402,6 +402,31 @@ app.get('/api/khoi/:grade', (req, res) => {
     res.json(db.classesData.filter(c => c.grade === grade));
 });
 
+// Khởi tạo mục lịch tuần trong db nếu chưa có
+if (!db.weeklySchedule) {
+    db.weeklySchedule = [
+        { day: "Thứ Hai", content: "Chào cờ đầu tuần & Sinh hoạt chủ nhiệm theo chủ điểm tháng." },
+        { day: "Thứ Năm", content: "Đoàn trường kiểm tra đột xuất nề nếp thi đua các khối lớp." },
+        { day: "Thứ Bảy", content: "Họp giao ban Giám thị & Giáo viên chủ nhiệm tổng kết tuần." }
+    ];
+}
+
+// API lấy lịch tuần
+app.get('/api/schedule', (req, res) => {
+    res.json(db.weeklySchedule || []);
+});
+
+// API cập nhật lịch tuần (Dành cho Giám thị / Đoàn trường / BGH)
+app.post('/api/schedule', (req, res) => {
+    const { schedule } = req.body;
+    if (Array.isArray(schedule)) {
+        db.weeklySchedule = schedule;
+        saveDatabase();
+        return res.json({ success: true, schedule: db.weeklySchedule });
+    }
+    res.status(400).json({ error: "Dữ liệu lịch công tác không hợp lệ!" });
+});
+
 // ==========================================
 // API QUẢN LÝ SAO ĐỎ & CHẤM THI ĐUA
 // ==========================================
